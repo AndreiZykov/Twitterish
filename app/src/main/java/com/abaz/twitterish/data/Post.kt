@@ -3,6 +3,7 @@ package com.abaz.twitterish.data
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.*
 
 /**
  * @author: Anthony Busto
@@ -12,5 +13,6 @@ import androidx.room.PrimaryKey
 data class Post(@PrimaryKey(autoGenerate = false) val id: Long,
                 @ColumnInfo(name = "USER_ID") val userId: Long,
                 @ColumnInfo(name = "BODY") val body: String,
+                @ColumnInfo(name = "DATE") val date: Date,
                 @ColumnInfo(name = "LIKES_COUNT") val likesCount: Int,
                 @ColumnInfo(name = "COMMENTS_COUNT") val commentsCount: Int)
