@@ -1,6 +1,7 @@
 package com.abaz.twitterish.screen
 
 import com.abaz.twitterish.mvrx.MvRxViewModel
+import com.abaz.twitterish.network.TechTalkApi
 import com.abaz.twitterish.network.TechTalkService
 import com.abaz.twitterish.network.response.PostListReponse
 import com.airbnb.mvrx.*
@@ -24,7 +25,7 @@ data class HomeFeedState(val feed: Async<PostListReponse> = Uninitialized) : MvR
 
 class HomeFeedViewModel(
     initialState: HomeFeedState,
-    private val techTalkService: TechTalkService
+    private val api: TechTalkApi
 ) : MvRxViewModel<HomeFeedState>(initialState, debugMode = true) {
 
 
@@ -34,16 +35,7 @@ class HomeFeedViewModel(
 
     fun fetchFeed() = withState { state ->
         if (state.feed is Loading) return@withState
-//        techTalkService
-//            .feed()
-//            .subscribeOn(Schedulers.io())
-//            .execute { copy(feed = it) }
-
-
-        Observable.create<PostListReponse> {
-            it.onNext(PostListReponse(PostListReponse.fakeData()))
-        }
-            .delay(2, TimeUnit.SECONDS)
+        api.feed()
             .subscribeOn(Schedulers.io())
             .execute { copy(feed = it) }
     }
@@ -52,16 +44,15 @@ class HomeFeedViewModel(
     companion object : MvRxViewModelFactory<HomeFeedViewModel, HomeFeedState> {
 
         override fun create(viewModelContext: ViewModelContext, state: HomeFeedState): HomeFeedViewModel {
-            val service: TechTalkService by viewModelContext.activity.inject()
-
-//            val service: TechTalkService by (viewModelContext as? FragmentViewModelContext)
+//            val api: TechTalkApi by (viewModelContext as? FragmentViewModelContext)
 //                ?.fragment?.inject()
-//
-            return HomeFeedViewModel(state, service)
+
+            val api: TechTalkApi by viewModelContext.activity.inject()
+
+            return HomeFeedViewModel(state, api)
         }
 
         override fun initialState(viewModelContext: ViewModelContext): HomeFeedState? {
-//            val foo = viewModelContext.activity.inject()
             return HomeFeedState()
         }
     }
