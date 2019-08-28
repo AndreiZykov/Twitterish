@@ -32,12 +32,14 @@ class HomeFeedItem(private val post: Post) : Item() {
     private val df: DateFormat = SimpleDateFormat("MMM,dd", Locale.getDefault())
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
-        viewHolder.itemView.post_body.text = post.body
-        viewHolder.itemView.user_name.text = post.userName
-        viewHolder.itemView.post_date_time.text = df.format(post.date!!)
-        viewHolder.itemView.reply_count_text.text = post.replyCount.toString()
-        viewHolder.itemView.repost_count_text.text = post.repostCount.toString()
-        viewHolder.itemView.rating_text.text = post.likesRating.toString()
+        viewHolder.itemView.apply {
+            post_body.text = post.body
+            user_name.text = post.userName
+            post_date_time.text = df.format(post.date!!)
+            reply_count_text.text = post.replyCount.toString()
+            repost_count_text.text = post.repostCount.toString()
+            rating_text.text = post.likesRating.toString()
+        }
 
     }
 
