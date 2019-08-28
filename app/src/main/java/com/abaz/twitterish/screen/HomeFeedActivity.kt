@@ -18,16 +18,7 @@ class HomeFeedActivity: BaseMvRxActivity() {
         showFragment(HomeFeedFragment(), "HomeFeedFragment")
     }
 
-
     fun showFragment(frag: Fragment, tag: String) {
-        supportFragmentManager
-            .beginTransaction()
-            .addToBackStack(null)
-            .add(android.R.id.content, frag, tag)
-            .commit()
-    }
-
-    fun replaceFragment(frag: Fragment, tag: String) {
         supportFragmentManager
             .beginTransaction()
             .addToBackStack(null)
