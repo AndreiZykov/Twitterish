@@ -1,8 +1,7 @@
 package com.abaz.twitterish.screen.postdetails
 
 import android.os.Bundle
-import android.view.View
-import com.abaz.twitterish.screen.HomeFeedViewModel
+import com.abaz.twitterish.screen.HomeFeedMvRxViewModel
 import com.airbnb.mvrx.BaseMvRxFragment
 import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.activityViewModel
@@ -15,7 +14,7 @@ import com.airbnb.mvrx.args
 class PostDetailsFragment: BaseMvRxFragment() {
 
 
-    private val viewModel: HomeFeedViewModel by activityViewModel()
+    private val viewModel: HomeFeedMvRxViewModel by activityViewModel()
 
     private val postId: Long by args()
 

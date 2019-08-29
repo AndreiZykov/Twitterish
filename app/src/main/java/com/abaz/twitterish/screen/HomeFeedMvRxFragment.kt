@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.abaz.twitterish.R
-import com.abaz.twitterish.network.response.PostListReponse
 import com.abaz.twitterish.screen.postdetails.PostDetailsFragment
 import com.airbnb.mvrx.*
 import com.xwray.groupie.GroupAdapter
@@ -17,13 +16,22 @@ import kotlinx.android.synthetic.main.fragment_home_feed.*
  * @author: Anthony Busto
  * @date:   2019-08-28
  */
-class HomeFeedFragment: BaseMvRxFragment() {
+class HomeFeedMvRxFragment : BaseMvRxFragment() {
 
-    private val viewModel: HomeFeedViewModel by activityViewModel()
+    private val viewModel: HomeFeedMvRxViewModel by activityViewModel()
 
-    private val adapter:  GroupAdapter<*>
+
+    private val adapter: GroupAdapter<*>
         get() = (recycler_view?.adapter as? GroupAdapter<*>)
             ?: GroupAdapter<ViewHolder>()
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+//        viewModel.asyncSubscribe(HomeFeedState::likeRequest, onSuccess = {
+//
+//        })
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_home_feed, container, false)
@@ -40,25 +48,38 @@ class HomeFeedFragment: BaseMvRxFragment() {
         }
 
         recycler_view.apply {
-            layoutManager = LinearLayoutManager(this@HomeFeedFragment.context)
-            adapter  = multiTypeAdapter
+            layoutManager = LinearLayoutManager(this@HomeFeedMvRxFragment.context)
+            adapter = multiTypeAdapter
         }
 
         swipe_layout.setOnRefreshListener {
             viewModel.fetchFeed()
         }
+
     }
 
     override fun invalidate() = withState(viewModel) { state ->
         swipe_layout.isRefreshing = state.feed is Loading
         val posts = state.feed()?.responseList
-        if(posts != null){
-            adapter.update(posts.map { HomeFeedItem(it) })
+        if (posts != null) {
+            adapter.update(posts.map { post ->
+                HomeFeedItem(post = post,
+                    onReply = { viewModel.reply(it) },
+                    onRepost = { viewModel.repost(it) },
+                    onLike = { viewModel.like(it) },
+                    onDislike = { viewModel.dislike(it) }
+                )
+            })
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModel.dispose()
+    }
+
     private fun goToDetails(id: Long) {
-        (activity as? HomeFeedActivity)?.showFragment(
+        (activity as? HomeFeedMvRxActivity)?.showFragment(
             PostDetailsFragment.newInstance(id), "PostDetailsFragment"
         )
     }

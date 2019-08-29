@@ -20,30 +20,35 @@ data class Post(
     @ColumnInfo(name = "USER_NAME")
     val userName: String,
 
-
     @ColumnInfo(name = "BODY")
     val body: String,
 
-
-//    @ColumnInfo(name = "DATE") val date: Long = DateTime.now().millis,
-
-
     @ColumnInfo(name = "DATE")
-//    val date: DateTime? = DateTime.now(),
     val date: Date? = Date(),
 
+    @ColumnInfo(name = "LIKES_RATING")
+    val likesRating: Int = 0,
 
-    @ColumnInfo(name = "LIKES_RATING") val likesRating: Int = 0,
+    @ColumnInfo(name = "REPOST_COUNT")
+    val repostCount: Int = 0,
 
-
-    @ColumnInfo(name = "REPOST_COUNT") val repostCount: Int = 0,
-
-
-    @ColumnInfo(name = "REPLY_COUNT") val replyCount: Int,
-
+    @ColumnInfo(name = "REPLY_COUNT")
+    val replyCount: Int,
 
     //post this was re-posted from
-    @ColumnInfo(name = "ORIGINAL_POST_ID") var originalPost: Long? = null,
+    @ColumnInfo(name = "ORIGINAL_POST_ID")
+    var originalPost: Long? = null,
+
     //post this was quoted from
-    @ColumnInfo(name = "QUOTED_POST_ID") var quotedPost: Post? = null
+    @ColumnInfo(name = "QUOTED_POST_ID")
+    var quotedPost: Post? = null,
+
+    @ColumnInfo(name = "LIKED_BY_ME")
+    val isLikedByMe: Boolean = false,
+
+    @ColumnInfo(name = "REPOSTED_BY_ME")
+    val isRepostedByMe: Boolean = false
+
+
+
 )

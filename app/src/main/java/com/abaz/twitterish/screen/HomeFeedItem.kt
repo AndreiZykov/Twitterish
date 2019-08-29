@@ -1,15 +1,19 @@
 package com.abaz.twitterish.screen
 
+import android.graphics.Color
+import android.graphics.PorterDuff
 import com.abaz.twitterish.R
 import com.abaz.twitterish.data.Post
-import com.abaz.twitterish.network.response.PostListReponse
-
+import com.jakewharton.rxbinding3.view.clicks
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
+import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_post.view.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import com.abaz.twitterish.screen.PostExtrasIntent.*
 
 /**
  * import kotlinx.android.synthetic.main.layout_post.*
@@ -25,11 +29,28 @@ import java.util.*
  * @date:   2019-08-28
  */
 
-class HomeFeedItem(private val post: Post) : Item() {
+sealed class PostExtrasIntent(open val postId: Long) {
+    data class Reply(override val postId: Long) : PostExtrasIntent(postId)
+    data class Repost(override val postId: Long) : PostExtrasIntent(postId)
+    data class Like(override val postId: Long) : PostExtrasIntent(postId)
+    data class Dislike(override val postId: Long) : PostExtrasIntent(postId)
+}
+
+class HomeFeedItem(private val post: Post,
+                   private val onReply: (postId: Long) -> Unit,
+                   private val onRepost: (postId: Long) -> Unit,
+                   private val onLike: (postId: Long) -> Unit,
+                   private val onDislike: (postId: Long) -> Unit
+)
+    : Item() {
 
 //    val df: DateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
     private val df: DateFormat = SimpleDateFormat("MMM,dd", Locale.getDefault())
+
+//    private val intents: PublishSubject<PostExtrasIntent> = PublishSubject.create()
+
+    private val postId = post.id
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.apply {
@@ -39,9 +60,42 @@ class HomeFeedItem(private val post: Post) : Item() {
             reply_count_text.text = post.replyCount.toString()
             repost_count_text.text = post.repostCount.toString()
             rating_text.text = post.likesRating.toString()
+
+//            Observable.merge(
+//                reply_layout.clicks().map { Reply(postId) },
+//                repost_layout.clicks().map { Repost(postId) },
+//                thumbs_up_icon.clicks().map { Like(postId) },
+//                thumbs_down_icon.clicks().map { Dislike(postId) }
+//            ).subscribe(intents)
+
+
+            reply_layout.setOnClickListener {
+                onReply(postId)
+            }
+
+            repost_layout.setOnClickListener {
+                onRepost(postId)
+            }
+
+            thumbs_up_icon.setOnClickListener {
+                onLike(postId)
+            }
+
+            if(post.likesRating > 0 ) {
+                thumbs_up_icon.setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_ATOP)
+            } else {
+                thumbs_up_icon.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP)
+            }
+
+            thumbs_down_icon.setOnClickListener {
+                onDislike(postId)
+            }
+
         }
 
     }
+
+//    fun intents(): Observable<PostExtrasIntent> = intents
 
     override fun getId(): Long = post.id
 
