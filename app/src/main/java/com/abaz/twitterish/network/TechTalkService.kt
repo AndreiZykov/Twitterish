@@ -5,10 +5,7 @@ import com.abaz.twitterish.network.response.BooleanResponse
 import com.abaz.twitterish.network.response.PostListReponse
 import com.abaz.twitterish.network.response.ResponseObject
 import io.reactivex.Observable
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -18,7 +15,7 @@ import java.util.concurrent.TimeUnit
 interface TechTalkService {
 
     @GET("feed")
-    fun feed(): Observable<PostListReponse>
+    fun feed(@Query("page") page: Int): Observable<PostListReponse>
 
 
     @POST("post/{id}/like")
@@ -31,11 +28,11 @@ interface TechTalkService {
 
 class TechTalkApi(provider: RetrofitProvider) {
 
-    private val api = provider.provide().create(TechTalkService::class.java)
+    private val service = provider.provide().create(TechTalkService::class.java)
 
-    fun feed(): Observable<PostListReponse> = api.feed()
+    fun feed(page: Int): Observable<PostListReponse> = service.feed(page)
 
-    fun like(id: Long): Observable<ResponseObject<Post>> = api.like(id)
+    fun like(id: Long): Observable<ResponseObject<Post>> = service.like(id)
 
-    fun dislike(id: Long):  Observable<ResponseObject<Post>> = api.dislike(id)
+    fun dislike(id: Long):  Observable<ResponseObject<Post>> = service.dislike(id)
 }

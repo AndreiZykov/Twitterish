@@ -1,7 +1,6 @@
-package com.abaz.twitterish.utils
+package com.abaz.twitterish.utils.extensions
 
 import java.util.*
-import kotlin.math.abs
 
 /**
  * @author: Anthony Busto

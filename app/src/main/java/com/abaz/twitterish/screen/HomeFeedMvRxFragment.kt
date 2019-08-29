@@ -5,9 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.abaz.printlnDebug
+import com.abaz.twitterish.PaginationListener
 import com.abaz.twitterish.R
 import com.abaz.twitterish.screen.postdetails.PostDetailsFragment
+import com.abaz.twitterish.utils.extensions.showIf
+import com.abaz.twitterish.utils.extensions.showOrGone
 import com.airbnb.mvrx.*
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
@@ -49,34 +54,21 @@ class HomeFeedMvRxFragment : BaseMvRxFragment() {
         }
 
         recycler_view.apply {
-            layoutManager = LinearLayoutManager(this@HomeFeedMvRxFragment.context)
+            layoutManager = LinearLayoutManager(context)
             adapter = multiTypeAdapter
+            addPaginationListener()
         }
 
-        swipe_layout.setOnRefreshListener {
-            viewModel.fetchFeed()
-        }
-
+        swipe_layout.addRefreshListener()
     }
 
     override fun invalidate() = withState(viewModel) { state ->
-//        swipe_layout.isRefreshing = state.feedRequest is Loading
-//        val posts = state.feedRequest()?.responseList
-//        if (posts != null) {
-//            adapter.update(posts.map { post ->
-//                HomeFeedItem(post = post,
-//                    onReply = { viewModel.reply(it) },
-//                    onRepost = { viewModel.repost(it) },
-//                    onLike = { viewModel.rating(it) },
-//                    onDislike = { viewModel.dislike(it) }
-//                )
-//            })
-//        }
-
 
         printlnDebug("invalidate called: state = $state")
 
-        swipe_layout.isRefreshing = state.feedRequest is Loading
+        swipe_layout.isRefreshing = state.feedRequest is Loading && state.feed.isEmpty()
+
+        load_more_progress_bar.showOrGone(state.feedRequest is Loading && state.feed.isNotEmpty())
 
         adapter.updateAsync(state.feed.map { post ->
             HomeFeedItem(post = post,
@@ -97,5 +89,30 @@ class HomeFeedMvRxFragment : BaseMvRxFragment() {
         (activity as? HomeFeedMvRxActivity)?.showFragment(
             PostDetailsFragment.newInstance(id), "PostDetailsFragment"
         )
+    }
+
+
+    private fun SwipeRefreshLayout.addRefreshListener() {
+        setOnRefreshListener {
+            viewModel.updateFeed()
+        }
+    }
+
+    private fun RecyclerView.addPaginationListener() {
+
+        addOnScrollListener(object : PaginationListener(HomeFeedMvRxViewModel.ITEMS_PER_PAGE) {
+
+            override val isLoading: Boolean
+                get() = withState(viewModel) { state -> state }.feedRequest is Loading
+
+            //TODO: We need a way to determine if this is the last page.
+            //Maybe API should return totalPage, currentPage on response?
+            override val isLastPage: Boolean
+                get() = false
+
+            override fun loadMoreItems() {
+                viewModel.fetchFeed()
+            }
+        })
     }
 }

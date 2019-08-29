@@ -1,4 +1,4 @@
-package com.abaz.twitterish.utils
+package com.abaz.twitterish.utils.extensions
 
 /**
  * @author: Anthony Busto

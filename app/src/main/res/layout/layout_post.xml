@@ -141,14 +141,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/thumbs_up_icon"
+                        android:layout_marginEnd="10dp"
                         android:src="@drawable/ic_thumbs_up"/>
 
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="12"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
+                        android:text="1"
                         android:id="@+id/rating_text"
                         android:drawablePadding="5dp"/>
 
@@ -156,6 +155,7 @@
                 <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
                         android:id="@+id/thumbs_down_icon"
                         android:src="@drawable/ic_thumbs_down"/>
 

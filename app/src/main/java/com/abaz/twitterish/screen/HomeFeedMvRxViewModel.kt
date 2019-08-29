@@ -7,7 +7,7 @@ import com.abaz.twitterish.mvrx.MvRxViewModel
 import com.abaz.twitterish.network.TechTalkApi
 import com.abaz.twitterish.network.response.PostListReponse
 import com.abaz.twitterish.network.response.ResponseObject
-import com.abaz.twitterish.utils.copy
+import com.abaz.twitterish.utils.extensions.copy
 import com.airbnb.mvrx.*
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -37,18 +37,33 @@ class HomeFeedMvRxViewModel(
 
     private val disposables = CompositeDisposable()
 
+    var page = 0
+
     init {
         fetchFeed()
     }
 
     fun fetchFeed() = withState { state ->
         if (state.feedRequest is Loading) return@withState
-        api.feed()
+        api.feed(++page)
             .subscribeOn(Schedulers.io())
             .execute {
                 copy(
                     feedRequest = it,
-                    feed = it()?.responseList ?: emptyList()
+                    feed = feed + (it()?.responseList ?: emptyList())
+                )
+            }
+    }
+
+    fun updateFeed() = withState { state ->
+        if (state.feedRequest is Loading) return@withState
+        page = 1
+        api.feed(page)
+            .subscribeOn(Schedulers.io())
+            .execute {
+                copy(
+                    feedRequest = it,
+                    feed = it()?.responseList ?: feed
                 )
             }
     }
@@ -241,6 +256,8 @@ class HomeFeedMvRxViewModel(
 
 
     companion object : MvRxViewModelFactory<HomeFeedMvRxViewModel, HomeFeedState> {
+
+        const val ITEMS_PER_PAGE = 10
 
         override fun create(viewModelContext: ViewModelContext, state: HomeFeedState): HomeFeedMvRxViewModel {
 //            val api: TechTalkApi by (viewModelContext as? FragmentViewModelContext)

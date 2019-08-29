@@ -58,15 +58,6 @@ data class Post(
 
 
 ) {
-
-//    val likeDislikeStatus: LikeDislikeStatus
-//        get() = when {
-//            authorizedUserExtras?.rating ?: 0 > 0 -> LikeDislikeStatus.Liked
-//            authorizedUserExtras?.dislike ?: 0 > 0 -> LikeDislikeStatus.Disliked
-//            else -> LikeDislikeStatus.Neutral
-//        }
-
-
     val likeDislikeStatus: LikeDislikeStatus
         get() = when {
             authorizedUserExtras?.rating ?: 0 > 0 -> LikeDislikeStatus.Liked
@@ -76,25 +67,6 @@ data class Post(
 
     val isRepostedByMe: Boolean
         get() = authorizedUserExtras?.repost ?: 0 > 0
-
-    fun updatePostExtrasLikedByMe(isLikedByMe: Boolean) {
-        if(authorizedUserExtras != null) {
-            authorizedUserExtras = authorizedUserExtras?.copy(
-                rating = if(isLikedByMe) 1 else 0
-            )
-        }
-
-        printlnDebug("authorizedUserExtras = $authorizedUserExtras")
-    }
-
-    fun updatePostExtrasDislikedByMe(isDislikedByMe: Boolean) {
-        if(authorizedUserExtras != null) {
-            authorizedUserExtras = authorizedUserExtras?.copy(
-                rating = if(isDislikedByMe) 1 else 0
-            )
-        }
-    }
-
 
 
 }
