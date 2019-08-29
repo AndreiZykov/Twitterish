@@ -2,14 +2,19 @@ package com.abaz.twitterish.data
 
 import androidx.room.ColumnInfo
 import androidx.room.PrimaryKey
-import com.google.gson.annotations.SerializedName
-import org.joda.time.DateTime
 import java.util.*
 
 /**
  * @author: Anthony Busto
  * @date:   2019-07-27
  */
+
+enum class LikeDislikeStatus {
+    Liked,
+    Disliked,
+    Neutral
+}
+
 data class Post(
     @PrimaryKey(autoGenerate = false)
     val id: Long = 0,
@@ -43,12 +48,55 @@ data class Post(
     @ColumnInfo(name = "QUOTED_POST_ID")
     var quotedPost: Post? = null,
 
-    @ColumnInfo(name = "LIKED_BY_ME")
-    val isLikedByMe: Boolean = false,
+    @ColumnInfo(name = "USER_POST_EXTRAS")
+    var authorizedUserExtras: PostExtras? = null
 
-    @ColumnInfo(name = "REPOSTED_BY_ME")
-    val isRepostedByMe: Boolean = false
+//    var likeDislikeStatus: LikeDislikeStatus =  LikeDislikeStatus.Neutral,
+//
+//    var isRepostedByMe: Boolean = false
+
+
+) {
+
+    val likeDislikeStatus: LikeDislikeStatus
+        get() = when {
+            authorizedUserExtras?.like ?: 0 > 0 -> LikeDislikeStatus.Liked
+            authorizedUserExtras?.dislike ?: 0 > 0 -> LikeDislikeStatus.Disliked
+            else -> LikeDislikeStatus.Neutral
+        }
+
+    val isRepostedByMe: Boolean
+        get() = authorizedUserExtras?.repost ?: 0 > 0
+
+    fun updatePostExtrasLikedByMe(isLikedByMe: Boolean) {
+        if(authorizedUserExtras != null) {
+            authorizedUserExtras = authorizedUserExtras?.copy(
+                like = if(isLikedByMe) 1 else 0,
+                dislike = 0
+            )
+        }
+    }
+
+    fun updatePostExtrasDislikedByMe(isDislikedByMe: Boolean) {
+        if(authorizedUserExtras != null) {
+            authorizedUserExtras = authorizedUserExtras?.copy(
+                dislike = if(isDislikedByMe) 1 else 0,
+                like = 0
+            )
+        }
+    }
+
+
+//    init {
+//        likeDislikeStatus = when {
+//            authorizedUserExtras?.like ?: 0 > 0 -> LikeDislikeStatus.Liked
+//            authorizedUserExtras?.dislike ?: 0 > 0 -> LikeDislikeStatus.Disliked
+//            else -> LikeDislikeStatus.Neutral
+//        }
+//
+//        isRepostedByMe = authorizedUserExtras?.repost ?: 0 > 0
+//    }
 
 
 
-)
+}

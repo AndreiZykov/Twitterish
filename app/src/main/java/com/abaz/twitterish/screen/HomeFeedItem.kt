@@ -2,7 +2,10 @@ package com.abaz.twitterish.screen
 
 import android.graphics.Color
 import android.graphics.PorterDuff
+import com.abaz.printlnDebug
+import com.abaz.twitterish.ColorInt
 import com.abaz.twitterish.R
+import com.abaz.twitterish.data.LikeDislikeStatus
 import com.abaz.twitterish.data.Post
 import com.jakewharton.rxbinding3.view.clicks
 import com.xwray.groupie.kotlinandroidextensions.Item
@@ -36,13 +39,13 @@ sealed class PostExtrasIntent(open val postId: Long) {
     data class Dislike(override val postId: Long) : PostExtrasIntent(postId)
 }
 
-class HomeFeedItem(private val post: Post,
-                   private val onReply: (postId: Long) -> Unit,
-                   private val onRepost: (postId: Long) -> Unit,
-                   private val onLike: (postId: Long) -> Unit,
-                   private val onDislike: (postId: Long) -> Unit
-)
-    : Item() {
+class HomeFeedItem(
+    private val post: Post,
+    private val onReply: (postId: Long) -> Unit,
+    private val onRepost: (postId: Long) -> Unit,
+    private val onLike: (postId: Long) -> Unit,
+    private val onDislike: (postId: Long) -> Unit
+) : Item() {
 
 //    val df: DateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
@@ -81,11 +84,26 @@ class HomeFeedItem(private val post: Post,
                 onLike(postId)
             }
 
-            if(post.likesRating > 0 ) {
-                thumbs_up_icon.setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_ATOP)
-            } else {
-                thumbs_up_icon.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP)
+            val thumbsIconsPair: Pair<Int, Int> = when {
+                post.likeDislikeStatus == LikeDislikeStatus.Liked -> Pair(Color.BLUE, ColorInt.GRAY)
+                post.likeDislikeStatus == LikeDislikeStatus.Disliked -> Pair(ColorInt.GRAY, Color.BLUE)
+                else -> Pair(ColorInt.GRAY, ColorInt.GRAY)
             }
+
+            if(post.id == 28L) {
+                printlnDebug("post.likeDislikeStatus= ${post.likeDislikeStatus}, thumbsIconsPair= $thumbsIconsPair")
+            }
+
+            thumbs_up_icon.setColorFilter(thumbsIconsPair.first, PorterDuff.Mode.SRC_ATOP)
+            thumbs_down_icon.setColorFilter(thumbsIconsPair.second, PorterDuff.Mode.SRC_ATOP)
+
+            val repostIconColor = if (post.isRepostedByMe) {
+                Color.BLUE
+            } else {
+                ColorInt.GRAY
+            }
+
+            repost_count_icon.setColorFilter(repostIconColor, PorterDuff.Mode.SRC_ATOP)
 
             thumbs_down_icon.setOnClickListener {
                 onDislike(postId)

@@ -21,14 +21,19 @@ interface TechTalkService {
 
     @POST("post/{id}/like")
     fun like(@Path("id") id: Long): Observable<BooleanResponse>
+
+    @POST("post/{id}/dislike")
+    fun dislike(@Path("id") id: Long): Observable<BooleanResponse>
 }
 
 
-class TechTalkApi(provider: RetrofitProvider): TechTalkService {
+class TechTalkApi(provider: RetrofitProvider) {
 
     private val api = provider.provide().create(TechTalkService::class.java)
 
-    override fun feed(): Observable<PostListReponse> = api.feed()
+    fun feed(): Observable<PostListReponse> = api.feed()
 
-    override fun like(id: Long): Observable<BooleanResponse> = api.like(id)
+    fun like(id: Long): Observable<BooleanResponse> = api.like(id)
+
+    fun dislike(id: Long): Observable<BooleanResponse> = api.dislike(id)
 }

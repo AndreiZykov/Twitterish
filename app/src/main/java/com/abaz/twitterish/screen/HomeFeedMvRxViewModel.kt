@@ -1,5 +1,6 @@
 package com.abaz.twitterish.screen
 
+import com.abaz.twitterish.data.LikeDislikeStatus
 import com.abaz.twitterish.mvrx.MvRxViewModel
 import com.abaz.twitterish.network.TechTalkApi
 import com.abaz.twitterish.network.response.BooleanResponse
@@ -44,13 +45,6 @@ class HomeFeedMvRxViewModel(
     }
 
     fun like(id: Long) = withState { state ->
-//        if (state.feed is Loading) return@withState
-//        api.like(id)
-//            .flatMap { api.feed() }
-//            .subscribeOn(Schedulers.io())
-//            .execute { copy(feed = it) }
-
-
         println("DEBUG::calling like, id=$id")
 
         api.like(id)
@@ -58,24 +52,24 @@ class HomeFeedMvRxViewModel(
             .execute {
                 println("DEBUG::like execute callback")
 
+
                 feed()?.responseList
                     ?.find { post -> post.id == id }
-                    ?.apply {
+                    ?.apply { updatePostExtrasLikedByMe(true) }
 
-                    }
 
-                setState {
-                    copy(feed = feed)
-                }
-                copy(likeRequest = it)
+                copy(
+                    feed = feed,
+                    likeRequest = it
+                )
             }
 
 
 //        api.like(id)
-//            .flatMap { api.feed() }
 //            .subscribeOn(Schedulers.io())
 //            .execute { copy(feed = it) }
     }
+
 
     fun dislike(id: Long) {
         println("DEBUG::dislike CLICKED WITH ID = $id")
@@ -93,14 +87,22 @@ class HomeFeedMvRxViewModel(
         disposables.add(
             clicks.subscribe(
                 {
-                    when(it) {
-                        is PostExtrasIntent.Like -> { println("Like Clicked")}
-                        is PostExtrasIntent.Dislike -> { println("Dislike Clicked")}
-                        is PostExtrasIntent.Reply -> { println("Reply Clicked")}
-                        is PostExtrasIntent.Repost -> { println("Repost Clicked")}
+                    when (it) {
+                        is PostExtrasIntent.Like -> {
+                            println("Like Clicked")
+                        }
+                        is PostExtrasIntent.Dislike -> {
+                            println("Dislike Clicked")
+                        }
+                        is PostExtrasIntent.Reply -> {
+                            println("Reply Clicked")
+                        }
+                        is PostExtrasIntent.Repost -> {
+                            println("Repost Clicked")
+                        }
                     }
                 },
-                {it.printStackTrace()}
+                { it.printStackTrace() }
             )
         )
     }

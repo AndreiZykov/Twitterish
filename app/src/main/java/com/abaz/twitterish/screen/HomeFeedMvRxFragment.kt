@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.abaz.printlnDebug
 import com.abaz.twitterish.R
 import com.abaz.twitterish.screen.postdetails.PostDetailsFragment
 import com.airbnb.mvrx.*
@@ -28,9 +29,9 @@ class HomeFeedMvRxFragment : BaseMvRxFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        viewModel.asyncSubscribe(HomeFeedState::likeRequest, onSuccess = {
-//
-//        })
+        viewModel.asyncSubscribe(HomeFeedState::likeRequest, onSuccess = {
+            printlnDebug("  viewModel.asyncSubscribe--likeRequest onSuccess")
+        })
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

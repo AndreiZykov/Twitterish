@@ -34,7 +34,7 @@ class OkHttpClientProvider {
 
     companion object {
         //for testing early on
-        const val TOKEN = "124C9E76880133C8480BA0A9696DD812D18140DD17F6DF97F2E9A09016DDE32D"
+        const val TOKEN = "836DDE54ED2698D501981F4A602B86AD51C4A3A83A0FB7453C2BB083ED22DD3D"
     }
 
     private val logging = HttpLoggingInterceptor().apply {
