@@ -32,23 +32,27 @@ class RetrofitProvider(private val okHttpClientProvider: OkHttpClientProvider) {
 
 class OkHttpClientProvider {
 
-    private val logging = HttpLoggingInterceptor().apply {
-        HttpLoggingInterceptor.Level.BODY
+    companion object {
+        //for testing early on
+        const val TOKEN = "836DDE54ED2698D501981F4A602B86AD51C4A3A83A0FB7453C2BB083ED22DD3D"
     }
 
-    fun provide() =   OkHttpClient()
-        .newBuilder()
+    private val logging = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BODY
+    }
+
+    fun provide() =   OkHttpClient.Builder()
+//       OkHttpClient().newBuilder()
         .addInterceptor(logging)
         .addInterceptor {
-            val token = "8015C77DC3D0A76074EC21380963E596429316E06FFB5B7F0E9A37F9A5E9ABDB"
             val newRequest = it.request().newBuilder()
-                .addHeader("Authorization", "Bearer $token")
+                .addHeader("Authorization", "Bearer $TOKEN")
                 .addHeader("Content-Type", "application/json")
                 .build()
             it.proceed(newRequest)
         }
-        .connectTimeout(15, TimeUnit.SECONDS)
-        .writeTimeout(5, TimeUnit.SECONDS)
-        .readTimeout(5, TimeUnit.SECONDS)
+        .connectTimeout(20, TimeUnit.SECONDS)
+        .writeTimeout(20, TimeUnit.SECONDS)
+        .readTimeout(20, TimeUnit.SECONDS)
         .build()
 }
