@@ -85,8 +85,8 @@ class HomeFeedItem(
             }
 
             val thumbsIconsPair: Pair<Int, Int> = when {
-                post.likeDislikeStatus == LikeDislikeStatus.Liked -> Pair(Color.BLUE, ColorInt.GRAY)
-                post.likeDislikeStatus == LikeDislikeStatus.Disliked -> Pair(ColorInt.GRAY, Color.BLUE)
+                post.likeDislikeStatus == LikeDislikeStatus.Liked -> Pair(ColorInt.COLOR_ACCENT, ColorInt.GRAY)
+                post.likeDislikeStatus == LikeDislikeStatus.Disliked -> Pair(ColorInt.GRAY, ColorInt.COLOR_ACCENT)
                 else -> Pair(ColorInt.GRAY, ColorInt.GRAY)
             }
 
@@ -98,7 +98,7 @@ class HomeFeedItem(
             thumbs_down_icon.setColorFilter(thumbsIconsPair.second, PorterDuff.Mode.SRC_ATOP)
 
             val repostIconColor = if (post.isRepostedByMe) {
-                Color.BLUE
+                ColorInt.COLOR_ACCENT
             } else {
                 ColorInt.GRAY
             }

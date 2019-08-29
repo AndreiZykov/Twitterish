@@ -3,6 +3,9 @@ package com.abaz.twitterish
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
+/**
+ * https://androidwave.com/pagination-in-recyclerview/
+ */
 abstract class PaginationListener(private val pageSize: Int = 10) : RecyclerView.OnScrollListener() {
 
     abstract val isLastPage: Boolean
