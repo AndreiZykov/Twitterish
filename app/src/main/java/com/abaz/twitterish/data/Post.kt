@@ -2,6 +2,7 @@ package com.abaz.twitterish.data
 
 import androidx.room.ColumnInfo
 import androidx.room.PrimaryKey
+import com.abaz.printlnDebug
 import java.util.*
 
 /**
@@ -14,6 +15,10 @@ enum class LikeDislikeStatus {
     Disliked,
     Neutral
 }
+
+
+typealias Posts = List<Post>
+fun Posts.findPost(id: Long) = firstOrNull { it.id == id }
 
 data class Post(
     @PrimaryKey(autoGenerate = false)
@@ -51,17 +56,21 @@ data class Post(
     @ColumnInfo(name = "USER_POST_EXTRAS")
     var authorizedUserExtras: PostExtras? = null
 
-//    var likeDislikeStatus: LikeDislikeStatus =  LikeDislikeStatus.Neutral,
-//
-//    var isRepostedByMe: Boolean = false
-
 
 ) {
 
+//    val likeDislikeStatus: LikeDislikeStatus
+//        get() = when {
+//            authorizedUserExtras?.rating ?: 0 > 0 -> LikeDislikeStatus.Liked
+//            authorizedUserExtras?.dislike ?: 0 > 0 -> LikeDislikeStatus.Disliked
+//            else -> LikeDislikeStatus.Neutral
+//        }
+
+
     val likeDislikeStatus: LikeDislikeStatus
         get() = when {
-            authorizedUserExtras?.like ?: 0 > 0 -> LikeDislikeStatus.Liked
-            authorizedUserExtras?.dislike ?: 0 > 0 -> LikeDislikeStatus.Disliked
+            authorizedUserExtras?.rating ?: 0 > 0 -> LikeDislikeStatus.Liked
+            authorizedUserExtras?.rating ?: 0 < 0 -> LikeDislikeStatus.Disliked
             else -> LikeDislikeStatus.Neutral
         }
 
@@ -71,31 +80,20 @@ data class Post(
     fun updatePostExtrasLikedByMe(isLikedByMe: Boolean) {
         if(authorizedUserExtras != null) {
             authorizedUserExtras = authorizedUserExtras?.copy(
-                like = if(isLikedByMe) 1 else 0,
-                dislike = 0
+                rating = if(isLikedByMe) 1 else 0
             )
         }
+
+        printlnDebug("authorizedUserExtras = $authorizedUserExtras")
     }
 
     fun updatePostExtrasDislikedByMe(isDislikedByMe: Boolean) {
         if(authorizedUserExtras != null) {
             authorizedUserExtras = authorizedUserExtras?.copy(
-                dislike = if(isDislikedByMe) 1 else 0,
-                like = 0
+                rating = if(isDislikedByMe) 1 else 0
             )
         }
     }
-
-
-//    init {
-//        likeDislikeStatus = when {
-//            authorizedUserExtras?.like ?: 0 > 0 -> LikeDislikeStatus.Liked
-//            authorizedUserExtras?.dislike ?: 0 > 0 -> LikeDislikeStatus.Disliked
-//            else -> LikeDislikeStatus.Neutral
-//        }
-//
-//        isRepostedByMe = authorizedUserExtras?.repost ?: 0 > 0
-//    }
 
 
 

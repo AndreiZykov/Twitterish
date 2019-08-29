@@ -1,7 +1,9 @@
 package com.abaz.twitterish.network
 
+import com.abaz.twitterish.data.Post
 import com.abaz.twitterish.network.response.BooleanResponse
 import com.abaz.twitterish.network.response.PostListReponse
+import com.abaz.twitterish.network.response.ResponseObject
 import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Headers
@@ -20,10 +22,10 @@ interface TechTalkService {
 
 
     @POST("post/{id}/like")
-    fun like(@Path("id") id: Long): Observable<BooleanResponse>
+    fun like(@Path("id") id: Long): Observable<ResponseObject<Post>>
 
     @POST("post/{id}/dislike")
-    fun dislike(@Path("id") id: Long): Observable<BooleanResponse>
+    fun dislike(@Path("id") id: Long):  Observable<ResponseObject<Post>>
 }
 
 
@@ -33,7 +35,7 @@ class TechTalkApi(provider: RetrofitProvider) {
 
     fun feed(): Observable<PostListReponse> = api.feed()
 
-    fun like(id: Long): Observable<BooleanResponse> = api.like(id)
+    fun like(id: Long): Observable<ResponseObject<Post>> = api.like(id)
 
-    fun dislike(id: Long): Observable<BooleanResponse> = api.dislike(id)
+    fun dislike(id: Long):  Observable<ResponseObject<Post>> = api.dislike(id)
 }

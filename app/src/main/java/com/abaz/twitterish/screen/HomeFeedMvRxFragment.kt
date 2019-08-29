@@ -29,9 +29,9 @@ class HomeFeedMvRxFragment : BaseMvRxFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.asyncSubscribe(HomeFeedState::likeRequest, onSuccess = {
-            printlnDebug("  viewModel.asyncSubscribe--likeRequest onSuccess")
-        })
+//        viewModel.asyncSubscribe(HomeFeedState::likeRequest, onSuccess = {
+//            printlnDebug("  viewModel.asyncSubscribe--likeRequest onSuccess")
+//        })
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -60,18 +60,32 @@ class HomeFeedMvRxFragment : BaseMvRxFragment() {
     }
 
     override fun invalidate() = withState(viewModel) { state ->
-        swipe_layout.isRefreshing = state.feed is Loading
-        val posts = state.feed()?.responseList
-        if (posts != null) {
-            adapter.update(posts.map { post ->
-                HomeFeedItem(post = post,
-                    onReply = { viewModel.reply(it) },
-                    onRepost = { viewModel.repost(it) },
-                    onLike = { viewModel.like(it) },
-                    onDislike = { viewModel.dislike(it) }
-                )
-            })
-        }
+//        swipe_layout.isRefreshing = state.feedRequest is Loading
+//        val posts = state.feedRequest()?.responseList
+//        if (posts != null) {
+//            adapter.update(posts.map { post ->
+//                HomeFeedItem(post = post,
+//                    onReply = { viewModel.reply(it) },
+//                    onRepost = { viewModel.repost(it) },
+//                    onLike = { viewModel.rating(it) },
+//                    onDislike = { viewModel.dislike(it) }
+//                )
+//            })
+//        }
+
+
+        printlnDebug("invalidate called: state = $state")
+
+        swipe_layout.isRefreshing = state.feedRequest is Loading
+
+        adapter.updateAsync(state.feed.map { post ->
+            HomeFeedItem(post = post,
+                onReply = { viewModel.reply(it) },
+                onRepost = { viewModel.repost(it) },
+                onLike = { viewModel.like(it) },
+                onDislike = { viewModel.dislike(it) }
+            )
+        })
     }
 
     override fun onDestroyView() {

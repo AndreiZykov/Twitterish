@@ -115,6 +115,8 @@ class HomeFeedItem(
 
 //    fun intents(): Observable<PostExtrasIntent> = intents
 
+    override fun getChangePayload(newItem: com.xwray.groupie.Item<*>?): Any? = post
+
     override fun getId(): Long = post.id
 
     override fun getLayout() = R.layout.layout_post

@@ -1,10 +1,13 @@
 package com.abaz.twitterish.screen
 
-import com.abaz.twitterish.data.LikeDislikeStatus
+import com.abaz.printlnDebug
+import com.abaz.twitterish.data.Post
+import com.abaz.twitterish.data.Posts
 import com.abaz.twitterish.mvrx.MvRxViewModel
 import com.abaz.twitterish.network.TechTalkApi
-import com.abaz.twitterish.network.response.BooleanResponse
 import com.abaz.twitterish.network.response.PostListReponse
+import com.abaz.twitterish.network.response.ResponseObject
+import com.abaz.twitterish.utils.copy
 import com.airbnb.mvrx.*
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -17,8 +20,9 @@ import org.koin.android.ext.android.inject
  */
 
 data class HomeFeedState(
-    val feed: Async<PostListReponse> = Uninitialized,
-    val likeRequest: Async<BooleanResponse> = Uninitialized
+    val feedRequest: Async<PostListReponse> = Uninitialized,
+    val feed: Posts = emptyList(),
+    val likeRequest: Async<ResponseObject<Post>> = Uninitialized
 ) : MvRxState
 
 /**
@@ -38,42 +42,166 @@ class HomeFeedMvRxViewModel(
     }
 
     fun fetchFeed() = withState { state ->
-        if (state.feed is Loading) return@withState
+        if (state.feedRequest is Loading) return@withState
         api.feed()
             .subscribeOn(Schedulers.io())
-            .execute { copy(feed = it) }
+            .execute {
+                copy(
+                    feedRequest = it,
+                    feed = it()?.responseList ?: emptyList()
+                )
+            }
     }
 
+
     fun like(id: Long) = withState { state ->
-        println("DEBUG::calling like, id=$id")
+        println("DEBUG::calling rating, id=$id")
+
+        val indexOf = state.feed.indexOfFirst { p -> p.id == id }
+        val post = state.feed[indexOf]
+        val authorizedUserExtras = post.authorizedUserExtras
+        val currentLikeValue = (authorizedUserExtras?.rating ?: 0)
+        val isLikingFromNeutral = currentLikeValue == 0
+        val isLikingFromDislike = currentLikeValue < 0
+        val isLiking = isLikingFromNeutral || isLikingFromDislike
+        val currentLikesRating = post.likesRating
+        val newLikeValue = if (isLiking) 1 else 0
+        val newLikesRating = when {
+            isLikingFromNeutral -> currentLikesRating + 1
+            isLikingFromDislike -> currentLikesRating + 2
+            else -> currentLikesRating - 1
+        }
+
+        val newExtras = authorizedUserExtras?.copy(rating = newLikeValue)
+        setState {
+            copy(
+                feed = feed.copy(
+                    indexOf,
+                    post.copy(
+                        authorizedUserExtras = newExtras,
+                        likesRating = newLikesRating
+                    )
+                )
+            )
+        }
 
         api.like(id)
             .subscribeOn(Schedulers.io())
             .execute {
-                println("DEBUG::like execute callback")
+                printlnDebug("rating execute callback")
 
+                printlnDebug("${it()}")
 
-                feed()?.responseList
-                    ?.find { post -> post.id == id }
-                    ?.apply { updatePostExtrasLikedByMe(true) }
+                printlnDebug("${it()?.responseObject}")
 
+                val newFeed = it()?.responseObject?.let { post ->
+                    feed.copy(indexOf, post)
+                } ?: feed
 
                 copy(
-                    feed = feed,
-                    likeRequest = it
+                    likeRequest = it,
+                    feed = newFeed
                 )
             }
 
+    }
 
-//        api.like(id)
+    fun dislike(id: Long) = withState { state ->
+
+        println("DEBUG::calling dislike, id=$id")
+
+        val indexOf = state.feed.indexOfFirst { p -> p.id == id }
+        val post = state.feed[indexOf]
+        val authorizedUserExtras = post.authorizedUserExtras
+        val currentLikeValue = (authorizedUserExtras?.rating ?: 0)
+        val isDislikingFromNeutral = currentLikeValue == 0
+        val isDislikingFromLike = currentLikeValue > 0
+        val isDisliking = isDislikingFromNeutral || isDislikingFromLike
+        val currentLikesRating = post.likesRating
+        val newLikeValue = if (isDisliking) -1 else 0
+        val newLikesRating = when {
+            isDislikingFromNeutral -> currentLikesRating - 1
+            isDislikingFromLike -> currentLikesRating - 2
+            else -> currentLikesRating + 1
+        }
+
+        val newExtras = authorizedUserExtras?.copy(rating = newLikeValue)
+        setState {
+            copy(
+                feed = feed.copy(
+                    indexOf,
+                    post.copy(
+                        authorizedUserExtras = newExtras,
+                        likesRating = newLikesRating
+                    )
+                )
+            )
+        }
+
+        api.dislike(id)
+            .subscribeOn(Schedulers.io())
+            .execute {
+                printlnDebug("rating execute callback")
+
+                printlnDebug("${it()}")
+
+                printlnDebug("${it()?.responseObject}")
+
+                val newFeed = it()?.responseObject?.let { post ->
+                    feed.copy(indexOf, post)
+                } ?: feed
+
+                copy(
+                    likeRequest = it,
+                    feed = newFeed
+                )
+            }
+    }
+
+//    fun dislike(id: Long) = withState { state ->
+//
+//        println("DEBUG::calling dislike, id=$id")
+//
+//        val indexOf = state.feed.indexOfFirst { p -> p.id == id }
+//        val post = state.feed[indexOf]
+//        val authorizedUserExtras = post.authorizedUserExtras
+//        val currentDislikeValue = (authorizedUserExtras?.dislike ?: 0)
+//        val isDisliking = currentDislikeValue <= 0
+//        val currentLikesRating = post.likesRating
+//        val newDislikeValue = if (isDisliking) 1 else 0
+//        val newLikesRating = if (isDisliking) currentLikesRating - 1 else currentLikesRating + 1
+//        val newExtras = authorizedUserExtras?.copy(dislike = newDislikeValue, rating = 0)
+//        setState {
+//            copy(
+//                feed = feed.copy(
+//                    indexOf,
+//                    post.copy(
+//                        authorizedUserExtras = newExtras,
+//                        likesRating = newLikesRating
+//                    )
+//                )
+//            )
+//        }
+//
+//        api.dislike(id)
 //            .subscribeOn(Schedulers.io())
-//            .execute { copy(feed = it) }
-    }
-
-
-    fun dislike(id: Long) {
-        println("DEBUG::dislike CLICKED WITH ID = $id")
-    }
+//            .execute {
+//                printlnDebug("rating execute callback")
+//
+//                printlnDebug("${it()}")
+//
+//                printlnDebug("${it()?.responseObject}")
+//
+//                val newFeed = it()?.responseObject?.let { post ->
+//                    feed.copy(indexOf, post)
+//                } ?: feed
+//
+//                copy(
+//                    likeRequest = it,
+//                    feed = newFeed
+//                )
+//            }
+//    }
 
     fun reply(id: Long) {
         println("DEBUG::reply CLICKED WITH ID = $id")
