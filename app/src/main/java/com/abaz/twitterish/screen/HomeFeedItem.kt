@@ -85,12 +85,18 @@ class HomeFeedItem(
             }
 
             val thumbsIconsPair: Pair<Int, Int> = when {
-                post.likeDislikeStatus == LikeDislikeStatus.Liked -> Pair(ColorInt.COLOR_ACCENT, ColorInt.GRAY)
-                post.likeDislikeStatus == LikeDislikeStatus.Disliked -> Pair(ColorInt.GRAY, ColorInt.COLOR_ACCENT)
+                post.likeDislikeStatus == LikeDislikeStatus.Liked -> Pair(
+                    ColorInt.COLOR_ACCENT,
+                    ColorInt.GRAY
+                )
+                post.likeDislikeStatus == LikeDislikeStatus.Disliked -> Pair(
+                    ColorInt.GRAY,
+                    ColorInt.COLOR_ACCENT
+                )
                 else -> Pair(ColorInt.GRAY, ColorInt.GRAY)
             }
 
-            if(post.id == 28L) {
+            if (post.id == 28L) {
                 printlnDebug("post.likeDislikeStatus= ${post.likeDislikeStatus}, thumbsIconsPair= $thumbsIconsPair")
             }
 

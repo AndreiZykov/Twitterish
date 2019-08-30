@@ -1,6 +1,8 @@
 package com.abaz.twitterish.utils.extensions
 
 import android.view.View
+import android.widget.EditText
+import com.abaz.twitterish.utils.TextChangedListener
 
 /**
  * @author: Anthony Busto
@@ -8,19 +10,19 @@ import android.view.View
  */
 
 fun View.showIf(predicate: Boolean, defaultNotShow: Int = View.GONE) {
-    visibility = if(predicate) View.VISIBLE else defaultNotShow
+    visibility = if (predicate) View.VISIBLE else defaultNotShow
 }
 
 fun View.hideIf(predicate: Boolean, defaultNotShow: Int = View.GONE) {
-    visibility = if(predicate) defaultNotShow else  View.VISIBLE
+    visibility = if (predicate) defaultNotShow else View.VISIBLE
 }
 
 fun View.showOrHide(predicate: Boolean) {
-    if(predicate) show() else hide()
+    if (predicate) show() else hide()
 }
 
 fun View.showOrGone(predicate: Boolean) {
-    if(predicate) show() else gone()
+    if (predicate) show() else gone()
 }
 
 fun View.show() {
@@ -33,4 +35,8 @@ fun View.hide() {
 
 fun View.gone() {
     visibility = View.GONE
+}
+
+fun EditText.onTextChange(onTextChange: (String) -> Unit) {
+    addTextChangedListener(TextChangedListener(onTextChange))
 }
