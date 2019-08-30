@@ -1,22 +1,17 @@
 package com.abaz.twitterish.screen
 
-import android.graphics.Color
 import android.graphics.PorterDuff
 import com.abaz.printlnDebug
 import com.abaz.twitterish.ColorInt
 import com.abaz.twitterish.R
-import com.abaz.twitterish.data.LikeDislikeStatus
-import com.abaz.twitterish.data.Post
-import com.jakewharton.rxbinding3.view.clicks
+import com.abaz.twitterish.db.model.LikeDislikeStatus
+import com.abaz.twitterish.db.model.Post
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
-import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.layout_post.view.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
-import com.abaz.twitterish.screen.PostExtrasIntent.*
 
 /**
  * import kotlinx.android.synthetic.main.layout_post.*

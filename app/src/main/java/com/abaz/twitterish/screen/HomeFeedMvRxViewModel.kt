@@ -1,8 +1,8 @@
 package com.abaz.twitterish.screen
 
 import com.abaz.printlnDebug
-import com.abaz.twitterish.data.Post
-import com.abaz.twitterish.data.Posts
+import com.abaz.twitterish.db.model.Post
+import com.abaz.twitterish.db.model.Posts
 import com.abaz.twitterish.mvrx.MvRxViewModel
 import com.abaz.twitterish.network.TechTalkApi
 import com.abaz.twitterish.network.response.PostListReponse

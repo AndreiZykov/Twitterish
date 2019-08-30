@@ -1,10 +1,12 @@
 package com.abaz.twitterish.network
 
-import com.abaz.twitterish.data.Post
-import com.abaz.twitterish.data.User
+import com.abaz.twitterish.db.model.Post
+import com.abaz.twitterish.db.model.User
 import com.abaz.twitterish.network.request.LoginRequest
 import com.abaz.twitterish.network.response.PostListReponse
 import com.abaz.twitterish.network.response.ResponseObject
+import com.abaz.twitterish.utils.Password
+import com.abaz.twitterish.utils.Username
 import io.reactivex.Observable
 import retrofit2.http.*
 
@@ -41,10 +43,10 @@ class TechTalkApi(provider: RetrofitProvider) {
 
     fun dislike(id: Long): Observable<ResponseObject<Post>> = service.dislike(id)
 
-    fun login(username: String, password: String): Observable<ResponseObject<User>> =
-        service.login(LoginRequest(username, password))
+    fun login(username: Username, password: Password): Observable<ResponseObject<User>> =
+        service.login(LoginRequest(username.value, password.value))
 
-    fun signUp(username: String, password: String): Observable<ResponseObject<User>> =
-        service.signUp(LoginRequest(username, password))
+    fun signUp(username: Username, password: Password): Observable<ResponseObject<User>> =
+        service.signUp(LoginRequest(username.value, password.value))
 
 }

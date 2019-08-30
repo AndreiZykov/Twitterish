@@ -1,4 +1,4 @@
-package com.abaz.twitterish.data
+package com.abaz.twitterish.db.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

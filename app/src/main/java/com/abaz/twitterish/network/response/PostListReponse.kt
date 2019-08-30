@@ -1,7 +1,7 @@
 package com.abaz.twitterish.network.response
 
 
-import com.abaz.twitterish.data.Post
+import com.abaz.twitterish.db.model.Post
 import com.google.gson.annotations.SerializedName
 
 data class PostListReponse(

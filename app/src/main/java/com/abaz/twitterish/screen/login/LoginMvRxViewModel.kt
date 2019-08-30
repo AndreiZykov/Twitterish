@@ -1,10 +1,13 @@
 package com.abaz.twitterish.screen.login
 
 import com.abaz.twitterish.BuildConfig
-import com.abaz.twitterish.data.User
+import com.abaz.twitterish.data.UserDataSource
+import com.abaz.twitterish.db.model.User
 import com.abaz.twitterish.mvrx.MvRxViewModel
 import com.abaz.twitterish.network.TechTalkApi
 import com.abaz.twitterish.network.response.ResponseObject
+import com.abaz.twitterish.utils.Password
+import com.abaz.twitterish.utils.Username
 import com.airbnb.mvrx.*
 import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
 import io.reactivex.schedulers.Schedulers.io
@@ -14,11 +17,16 @@ data class LoginState(
     val email: String = "",
     val password: String = "",
     val passwordConfirmation: String = "",
-    val loginResponse: Async<ResponseObject<User>> = Uninitialized
+    val loginResponse: Async<ResponseObject<User>> = Uninitialized,
+    val isLoggedIn : Boolean = false
 ) : MvRxState
 
-class LoginMvRxViewModel(initialState: LoginState, private val api: TechTalkApi) :
+class LoginMvRxViewModel(initialState: LoginState, val userDataSource: UserDataSource) :
     MvRxViewModel<LoginState>(initialState = initialState, debugMode = BuildConfig.DEBUG) {
+
+    init {
+        setState { copy(isLoggedIn = userDataSource.isLoggedIn()) }
+    }
 
     fun emailChanged(email: String) {
         setState { copy(email = email) }
@@ -34,19 +42,21 @@ class LoginMvRxViewModel(initialState: LoginState, private val api: TechTalkApi)
 
     fun login() {
         withState { state ->
-            api.login(state.email, state.password)
+            userDataSource.login(Username(state.email), Password(state.password))
                 .subscribeOn(io())
                 .observeOn(mainThread())
-                .execute { copy(loginResponse = it) }
+                .execute {
+                    copy(loginResponse = it, isLoggedIn = userDataSource.isLoggedIn())
+                }
         }
     }
 
     fun signUp() {
         withState { state ->
-            api.signUp(state.email, state.password)
+            userDataSource.signUp(Username(state.email), Password(state.password))
                 .subscribeOn(io())
                 .observeOn(mainThread())
-                .execute { copy(loginResponse = it) }
+                .execute { copy(loginResponse = it, isLoggedIn = userDataSource.isLoggedIn()) }
         }
     }
 
@@ -56,8 +66,8 @@ class LoginMvRxViewModel(initialState: LoginState, private val api: TechTalkApi)
             viewModelContext: ViewModelContext,
             state: LoginState
         ): LoginMvRxViewModel {
-            val api: TechTalkApi by viewModelContext.activity.inject()
-            return LoginMvRxViewModel(state, api)
+            val userDataSource: UserDataSource by viewModelContext.activity.inject()
+            return LoginMvRxViewModel(state, userDataSource)
         }
 
         override fun initialState(viewModelContext: ViewModelContext): LoginState? {

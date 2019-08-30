@@ -1,9 +1,8 @@
-package com.abaz.twitterish.db
+package com.abaz.twitterish.db.dao
 
 import androidx.room.Insert
 import androidx.room.Query
-import com.abaz.twitterish.data.Comment
-import com.abaz.twitterish.data.Post
+import com.abaz.twitterish.db.model.Comment
 import java.util.*
 
 /**

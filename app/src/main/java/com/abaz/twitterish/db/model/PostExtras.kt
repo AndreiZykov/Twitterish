@@ -1,4 +1,4 @@
-package com.abaz.twitterish.data
+package com.abaz.twitterish.db.model
 
 /**
  * @author: Anthony Busto

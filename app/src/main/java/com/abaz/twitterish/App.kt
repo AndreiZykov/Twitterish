@@ -1,22 +1,19 @@
 package com.abaz.twitterish
 
-import android.app.Application
 import android.content.Context
 import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
+import com.abaz.twitterish.data.UserDataSource
 import com.abaz.twitterish.network.OkHttpClientProvider
 import com.abaz.twitterish.network.RetrofitProvider
 import com.abaz.twitterish.network.TechTalkApi
-import com.abaz.twitterish.network.TechTalkService
+import com.abaz.twitterish.data.repository.SharedPreferenceRepository
+import com.abaz.twitterish.data.repository.UserRepository
 import net.danlew.android.joda.JodaTimeAndroid
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.KoinComponent
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
-import java.util.concurrent.TimeUnit
 
 
 class App: MultiDexApplication(), KoinComponent {
@@ -43,11 +40,16 @@ class App: MultiDexApplication(), KoinComponent {
 
 val diModule = module {
 
+    single { SharedPreferenceRepository(get()) }
+
     single { OkHttpClientProvider() }
 
     single { RetrofitProvider(get()) }
 
     factory { TechTalkApi(get()) }
+
+    single<UserDataSource> { UserRepository(get(), get()) }
+
 }
 
 

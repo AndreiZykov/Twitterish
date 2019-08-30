@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.abaz.twitterish.R
+import com.abaz.twitterish.screen.BaseTechTalkFragment
+import com.abaz.twitterish.screen.HomeFeedMvRxActivity
 import com.abaz.twitterish.utils.extensions.onTextChange
 import com.airbnb.mvrx.BaseMvRxFragment
 import com.airbnb.mvrx.activityViewModel
@@ -14,7 +16,7 @@ import kotlinx.android.synthetic.main.fragment_login.login_button
 import kotlinx.android.synthetic.main.fragment_login.password_edit_text
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 
-class SignUpFragment : BaseMvRxFragment() {
+class SignUpFragment : BaseTechTalkFragment() {
 
     private val viewModel: LoginMvRxViewModel by activityViewModel()
 
@@ -30,10 +32,29 @@ class SignUpFragment : BaseMvRxFragment() {
         login_button.setOnClickListener { viewModel.signUp() }
     }
 
+    private fun goToFeedFragment(){
+        (activity as? HomeFeedMvRxActivity)?.goToFeedFragment()
+    }
+
+    override fun onBackPressed(): Boolean {
+        return false
+    }
+
     override fun invalidate() = withState(viewModel) { state ->
         email_edit_text.apply {
             if (text.toString() != state.email) setText(state.email)
         }
+        password_edit_text.apply {
+            if (text.toString() != state.password) setText(state.password)
+        }
+        password_confirmation_edit_text.apply {
+            if (text.toString() != state.password) setText(state.password)
+        }
+
+        if(state.isLoggedIn){
+            goToFeedFragment()
+        }
+
         return@withState
     }
 }

@@ -1,10 +1,10 @@
-package com.abaz.twitterish.db
+package com.abaz.twitterish.db.dao
 
 import androidx.room.Delete
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.abaz.twitterish.data.User
+import com.abaz.twitterish.db.model.User
 
 
 /**

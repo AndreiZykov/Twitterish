@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.fragment_home_feed.*
  * @author: Anthony Busto
  * @date:   2019-08-28
  */
-class HomeFeedMvRxFragment : BaseMvRxFragment() {
+class HomeFeedMvRxFragment : BaseTechTalkFragment() {
 
     private val viewModel: HomeFeedMvRxViewModel by activityViewModel()
 
@@ -91,6 +91,9 @@ class HomeFeedMvRxFragment : BaseMvRxFragment() {
         )
     }
 
+    override fun onBackPressed(): Boolean {
+        return true
+    }
 
     private fun SwipeRefreshLayout.addRefreshListener() {
         setOnRefreshListener {
