@@ -25,6 +25,7 @@ class RetrofitProvider(private val okHttpClientProvider: OkHttpClientProvider) {
         .client(okHttpClientProvider.provide())
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .baseUrl("https://busto-tech-talk.herokuapp.com/")
+//        .baseUrl("https://localhost:4567/")
         .build()
 
 }

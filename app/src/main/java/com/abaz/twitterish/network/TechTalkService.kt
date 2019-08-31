@@ -30,6 +30,9 @@ interface TechTalkService {
 
     @POST("user")
     fun signUp(@Body user: LoginRequest): Observable<ResponseObject<User>>
+
+    @POST("post")
+    fun new(@Body post: Post): Observable<ResponseObject<Post>>
 }
 
 
@@ -42,6 +45,16 @@ class TechTalkApi(provider: RetrofitProvider) {
     fun like(id: Long): Observable<ResponseObject<Post>> = service.like(id)
 
     fun dislike(id: Long): Observable<ResponseObject<Post>> = service.dislike(id)
+
+    fun new(post: Post): Observable<ResponseObject<Post>> = service.new(post)
+
+    fun new(body: String): Observable<ResponseObject<Post>> = service.new(
+        Post(
+            userId = 23,
+            userName = "Anthony",
+            body = body
+        )
+    )
 
     fun login(username: Username, password: Password): Observable<ResponseObject<User>> =
         service.login(LoginRequest(username.value, password.value))

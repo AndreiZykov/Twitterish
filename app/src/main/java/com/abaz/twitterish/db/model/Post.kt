@@ -42,7 +42,7 @@ data class Post(
     val repostCount: Int = 0,
 
     @ColumnInfo(name = "REPLY_COUNT")
-    val replyCount: Int,
+    val replyCount: Int = 0,
 
     //post this was re-posted from
     @ColumnInfo(name = "ORIGINAL_POST_ID")
