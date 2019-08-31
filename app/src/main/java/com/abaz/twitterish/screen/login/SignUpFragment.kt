@@ -8,10 +8,10 @@ import com.abaz.twitterish.R
 import com.abaz.twitterish.screen.BaseTechTalkFragment
 import com.abaz.twitterish.screen.HomeFeedMvRxActivity
 import com.abaz.twitterish.utils.extensions.onTextChange
-import com.airbnb.mvrx.BaseMvRxFragment
+import com.abaz.twitterish.utils.extensions.showOrGone
+import com.airbnb.mvrx.Loading
 import com.airbnb.mvrx.activityViewModel
 import com.airbnb.mvrx.withState
-import kotlinx.android.synthetic.main.fragment_login.email_edit_text
 import kotlinx.android.synthetic.main.fragment_login.login_button
 import kotlinx.android.synthetic.main.fragment_login.password_edit_text
 import kotlinx.android.synthetic.main.fragment_sign_up.*
@@ -26,7 +26,7 @@ class SignUpFragment : BaseTechTalkFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        email_edit_text.onTextChange(viewModel::emailChanged)
+        username_edit_text.onTextChange(viewModel::emailChanged)
         password_edit_text.onTextChange(viewModel::passwordChanged)
         password_confirmation_edit_text.onTextChange(viewModel::passwordConfirmationChanged)
         login_button.setOnClickListener { viewModel.signUp() }
@@ -41,8 +41,11 @@ class SignUpFragment : BaseTechTalkFragment() {
     }
 
     override fun invalidate() = withState(viewModel) { state ->
-        email_edit_text.apply {
-            if (text.toString() != state.email) setText(state.email)
+
+        sign_up_progress_bar.showOrGone(state.loginResponse is Loading)
+
+        username_edit_text.apply {
+            if (text.toString() != state.username) setText(state.username)
         }
         password_edit_text.apply {
             if (text.toString() != state.password) setText(state.password)

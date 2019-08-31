@@ -5,7 +5,7 @@ import com.abaz.twitterish.db.model.Post
 import com.abaz.twitterish.db.model.Posts
 import com.abaz.twitterish.mvrx.MvRxViewModel
 import com.abaz.twitterish.network.TechTalkApi
-import com.abaz.twitterish.network.response.PostListReponse
+import com.abaz.twitterish.network.response.PostListResponse
 import com.abaz.twitterish.network.response.ResponseObject
 import com.abaz.twitterish.utils.extensions.copy
 import com.airbnb.mvrx.*
@@ -20,7 +20,7 @@ import org.koin.android.ext.android.inject
  */
 
 data class HomeFeedState(
-    val feedRequest: Async<PostListReponse> = Uninitialized,
+    val feedRequest: Async<PostListResponse> = Uninitialized,
     val feed: Posts = emptyList(),
     val likeRequest: Async<ResponseObject<Post>> = Uninitialized
 ) : MvRxState

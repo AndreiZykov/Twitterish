@@ -2,11 +2,15 @@
     <string name="app_name">Twitter-ish</string>
     <string name="action_settings">Settings</string>
     <string name="textview">TextView</string>
-    <string name="login_email_hint">Email Address</string>
+    <string name="login_username_hint">Username</string>
     <string name="login_password_hint">Password</string>
     <string name="login_screen_title">Login to Twitter-ish</string>
     <string name="sign_up_screen_title">Sign Up to Twitter-ish</string>
     <string name="login_button_title">Sign In</string>
     <string name="sign_up_button_title">Sign Up</string>
     <string name="login_password_confirmation_hint">Confirm Password</string>
+    <string name="empty" />
+    <string name="error_message_user_name_not_found">User Name Not Found</string>
+    <string name="error_message_empty_user_name">Empty User Name</string>
+    <string name="error_message_empty_password">Empty Password</string>
 </resources>

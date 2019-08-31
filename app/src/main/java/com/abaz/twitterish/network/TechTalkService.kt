@@ -3,7 +3,7 @@ package com.abaz.twitterish.network
 import com.abaz.twitterish.db.model.Post
 import com.abaz.twitterish.db.model.User
 import com.abaz.twitterish.network.request.LoginRequest
-import com.abaz.twitterish.network.response.PostListReponse
+import com.abaz.twitterish.network.response.PostListResponse
 import com.abaz.twitterish.network.response.ResponseObject
 import com.abaz.twitterish.utils.Password
 import com.abaz.twitterish.utils.Username
@@ -17,7 +17,7 @@ import retrofit2.http.*
 interface TechTalkService {
 
     @GET("feed")
-    fun feed(@Query("page") page: Int): Observable<PostListReponse>
+    fun feed(@Query("page") page: Int): Observable<PostListResponse>
 
     @POST("post/{id}/like")
     fun like(@Path("id") id: Long): Observable<ResponseObject<Post>>
@@ -37,7 +37,7 @@ class TechTalkApi(provider: RetrofitProvider) {
 
     private val service = provider.provide().create(TechTalkService::class.java)
 
-    fun feed(page: Int): Observable<PostListReponse> = service.feed(page)
+    fun feed(page: Int): Observable<PostListResponse> = service.feed(page)
 
     fun like(id: Long): Observable<ResponseObject<Post>> = service.like(id)
 
