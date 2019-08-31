@@ -48,7 +48,7 @@ class SignUpFragment : BaseTechTalkFragment() {
             if (text.toString() != state.password) setText(state.password)
         }
         password_confirmation_edit_text.apply {
-            if (text.toString() != state.password) setText(state.password)
+            if (text.toString() != state.passwordConfirmation) setText(state.password)
         }
 
         if(state.isLoggedIn){
