@@ -8,8 +8,10 @@ import com.abaz.twitterish.network.TechTalkApi
 import com.abaz.twitterish.network.response.PostListResponse
 import com.abaz.twitterish.network.response.ResponseObject
 import com.abaz.twitterish.utils.extensions.copy
+import com.abaz.twitterish.utils.extensions.upsert
 import com.airbnb.mvrx.*
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.koin.android.ext.android.inject
@@ -22,7 +24,9 @@ import org.koin.android.ext.android.inject
 data class HomeFeedState(
     val feedRequest: Async<PostListResponse> = Uninitialized,
     val feed: Posts = emptyList(),
-    val likeRequest: Async<ResponseObject<Post>> = Uninitialized
+    val selectedPostId: Long? = null,
+    val likeRequest: Async<ResponseObject<Post>> = Uninitialized,
+    val newPostRequest: Async<ResponseObject<Post>> = Uninitialized
 ) : MvRxState
 
 /**
@@ -68,6 +72,25 @@ class HomeFeedMvRxViewModel(
             }
     }
 
+
+    fun new(body: String) = withState { state ->
+        printlnDebug("calling new, body=$body")
+
+        api.new(body)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .execute {
+                if(it.invoke()?.responseObject != null) {
+                    copy(
+                        newPostRequest = it,
+//                    feed = feed + it.invoke()?.responseObject!!
+                        feed = feed.copy(0, it.invoke()?.responseObject!!)
+                    )
+                } else {
+                    copy(newPostRequest = it)
+                }
+            }
+    }
 
     fun like(id: Long) = withState { state ->
         println("DEBUG::calling rating, id=$id")

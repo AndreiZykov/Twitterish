@@ -10,6 +10,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.abaz.printlnDebug
 import com.abaz.twitterish.PaginationListener
 import com.abaz.twitterish.R
+import com.abaz.twitterish.screen.new_post.NewPostMvRxFragment
 import com.abaz.twitterish.screen.postdetails.PostDetailsFragment
 import com.abaz.twitterish.utils.extensions.showIf
 import com.abaz.twitterish.utils.extensions.showOrGone
@@ -60,6 +61,9 @@ class HomeFeedMvRxFragment : BaseTechTalkFragment() {
         }
 
         swipe_layout.addRefreshListener()
+
+        new_post_fab.setOnClickListener(::goToNewPostView)
+
     }
 
     override fun invalidate() = withState(viewModel) { state ->
@@ -94,6 +98,12 @@ class HomeFeedMvRxFragment : BaseTechTalkFragment() {
     override fun onBackPressed(): Boolean {
         return true
     }
+
+    private fun goToNewPostView(v: View) {
+        (activity as? HomeFeedMvRxActivity)
+            ?.showFragment(NewPostMvRxFragment(), "NewPostMvRxFragment")
+    }
+
 
     private fun SwipeRefreshLayout.addRefreshListener() {
         setOnRefreshListener {
