@@ -42,7 +42,7 @@ val diModule = module {
 
     single { SharedPreferenceRepository(get()) }
 
-    single { OkHttpClientProvider() }
+    single { OkHttpClientProvider(get()) }
 
     single { RetrofitProvider(get()) }
 

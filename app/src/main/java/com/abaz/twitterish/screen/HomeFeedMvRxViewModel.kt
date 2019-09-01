@@ -196,57 +196,26 @@ class HomeFeedMvRxViewModel(
             }
     }
 
-//    fun dislike(id: Long) = withState { state ->
-//
-//        println("DEBUG::calling dislike, id=$id")
-//
-//        val indexOf = state.feed.indexOfFirst { p -> p.id == id }
-//        val post = state.feed[indexOf]
-//        val authorizedUserExtras = post.authorizedUserExtras
-//        val currentDislikeValue = (authorizedUserExtras?.dislike ?: 0)
-//        val isDisliking = currentDislikeValue <= 0
-//        val currentLikesRating = post.likesRating
-//        val newDislikeValue = if (isDisliking) 1 else 0
-//        val newLikesRating = if (isDisliking) currentLikesRating - 1 else currentLikesRating + 1
-//        val newExtras = authorizedUserExtras?.copy(dislike = newDislikeValue, rating = 0)
-//        setState {
-//            copy(
-//                feed = feed.copy(
-//                    indexOf,
-//                    post.copy(
-//                        authorizedUserExtras = newExtras,
-//                        likesRating = newLikesRating
-//                    )
-//                )
-//            )
-//        }
-//
-//        api.dislike(id)
-//            .subscribeOn(Schedulers.io())
-//            .execute {
-//                printlnDebug("rating execute callback")
-//
-//                printlnDebug("${it()}")
-//
-//                printlnDebug("${it()?.responseObject}")
-//
-//                val newFeed = it()?.responseObject?.let { post ->
-//                    feed.copy(indexOf, post)
-//                } ?: feed
-//
-//                copy(
-//                    likeRequest = it,
-//                    feed = newFeed
-//                )
-//            }
-//    }
-
     fun reply(id: Long) {
         println("DEBUG::reply CLICKED WITH ID = $id")
     }
 
     fun repost(id: Long) {
         println("DEBUG::repost CLICKED WITH ID = $id")
+
+        api.repost(id)
+            .subscribeOn(Schedulers.io())
+            .execute {
+//                copy()
+                if(it.invoke()?.responseObject != null) {
+                    copy(
+                        newPostRequest = it,
+                        feed = feed.copy(0, it.invoke()?.responseObject!!)
+                    )
+                } else {
+                    copy(newPostRequest = it)
+                }
+            }
     }
 
     fun handleClicks(clicks: Observable<PostExtrasIntent>) {

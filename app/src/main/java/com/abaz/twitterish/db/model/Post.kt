@@ -69,3 +69,6 @@ data class Post(
 
 
 }
+
+
+data class PostBodyParams(val body: String, val userId: Long)

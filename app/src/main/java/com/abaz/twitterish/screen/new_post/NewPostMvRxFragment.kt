@@ -49,7 +49,7 @@ class NewPostMvRxFragment : BaseMvRxFragment() {
         send_icon.setOnClickListener {
             viewModel.new(post_body_view.let {
                 it.isEnabled = false
-                it.toString()
+                it.text.toString()
             })
         }
     }

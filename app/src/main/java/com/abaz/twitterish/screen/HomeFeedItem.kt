@@ -79,6 +79,10 @@ class HomeFeedItem(
                 onLike(postId)
             }
 
+            thumbs_down_icon.setOnClickListener {
+                onDislike(postId)
+            }
+
             val thumbsIconsPair: Pair<Int, Int> = when {
                 post.likeDislikeStatus == LikeDislikeStatus.Liked -> Pair(
                     ColorInt.COLOR_ACCENT,
@@ -105,10 +109,6 @@ class HomeFeedItem(
             }
 
             repost_count_icon.setColorFilter(repostIconColor, PorterDuff.Mode.SRC_ATOP)
-
-            thumbs_down_icon.setOnClickListener {
-                onDislike(postId)
-            }
 
         }
 
