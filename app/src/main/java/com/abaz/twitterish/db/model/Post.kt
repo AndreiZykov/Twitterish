@@ -45,8 +45,11 @@ data class Post(
     val replyCount: Int = 0,
 
     //post this was re-posted from
-    @ColumnInfo(name = "ORIGINAL_POST_ID")
-    var originalPost: Long? = null,
+//    @ColumnInfo(name = "ORIGINAL_POST_ID")
+//    var originalPostId: Long? = null,
+
+    @ColumnInfo(name = "ORIGINAL_POST")
+    var originalPost: Post? = null,
 
     //post this was quoted from
     @ColumnInfo(name = "QUOTED_POST_ID")

@@ -11,4 +11,6 @@ fun <T> List<T>.upsert(value: T, finder: (T) -> Boolean) = indexOfFirst(finder).
 
 fun <T> List<T>.copy(i: Int, value: T): List<T> = toMutableList().apply { set(i, value) }
 
+fun <T> List<T>.add(value: T, i: Int = 0): List<T> = toMutableList().apply { add(i, value) }
+
 inline fun <T> List<T>.delete(filter: (T) -> Boolean): List<T> = toMutableList().apply { removeAt(indexOfFirst(filter)) }

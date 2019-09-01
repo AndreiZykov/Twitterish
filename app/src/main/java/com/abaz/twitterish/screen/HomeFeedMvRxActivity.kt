@@ -30,6 +30,10 @@ class HomeFeedMvRxActivity : BaseMvRxActivity() {
         super.onBackPressed()
     }
 
+    fun close() {
+        super.onBackPressed()
+    }
+
     fun showFragment(frag: Fragment, tag: String, animate: Boolean = true) {
         val t = supportFragmentManager.beginTransaction()
         if (animate) {

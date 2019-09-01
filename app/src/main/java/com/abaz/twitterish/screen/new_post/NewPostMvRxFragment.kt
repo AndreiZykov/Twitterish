@@ -7,36 +7,57 @@ import android.view.ViewGroup
 import android.widget.Toolbar
 import com.abaz.printlnDebug
 import com.abaz.twitterish.R
+import com.abaz.twitterish.screen.BaseTechTalkFragment
 import com.abaz.twitterish.screen.HomeFeedMvRxActivity
 import com.abaz.twitterish.screen.HomeFeedMvRxViewModel
 import com.abaz.twitterish.screen.HomeFeedState
+import com.abaz.twitterish.utils.extensions.addTo
 import com.abaz.twitterish.utils.extensions.clear
 import com.abaz.twitterish.utils.extensions.showOrGone
-import com.airbnb.mvrx.BaseMvRxFragment
-import com.airbnb.mvrx.Loading
-import com.airbnb.mvrx.activityViewModel
-import com.airbnb.mvrx.withState
+import com.airbnb.mvrx.*
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_new_post.*
 
 /**
  * @author: Anthony Busto
  * @date:   2019-08-30
  */
-class NewPostMvRxFragment : BaseMvRxFragment() {
+class NewPostMvRxFragment : BaseTechTalkFragment() {
+
+    private val disposables = CompositeDisposable()
 
     private val viewModel: HomeFeedMvRxViewModel by activityViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.asyncSubscribe(HomeFeedState::newPostRequest, onSuccess = {
-            printlnDebug("  viewModel.asyncSubscribe--newPostRequest onSuccess")
-            post_body_view.apply {
-                isEnabled = true
-                clear()
+//        viewModel.asyncSubscribe(HomeFeedState::newPostRequest, onSuccess = {
+//            printlnDebug("viewModel.asyncSubscribe--newPostRequest onSuccess")
+//            post_body_view.apply {
+//                isEnabled = true
+//                clear()
+//            }
+//            (activity as? HomeFeedMvRxActivity)?.close()
+//        })
+
+
+        withState(viewModel) {
+            printlnDebug("newPostRequest initial state")
+            printlnDebug("it.complete::${it.newPostRequest.complete}")
+            printlnDebug("it.shouldLoad::${it.newPostRequest.shouldLoad}")
+        }
+
+        viewModel.subscribe {
+            if (it.newPostRequest is Success) {
+                printlnDebug("newPostRequest is Success")
+
+                printlnDebug("it.complete::${it.newPostRequest.complete}")
+                printlnDebug("it.shouldLoad::${it.newPostRequest.shouldLoad}")
             }
-            onnBackPressed()
-        })
+        }
+
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -45,15 +66,26 @@ class NewPostMvRxFragment : BaseMvRxFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         send_icon.setOnClickListener {
-            viewModel.new(post_body_view.let {
-                it.isEnabled = false
-                it.text.toString()
-            })
+            post_body_view.isEnabled = false
+            val body = post_body_view.text.toString()
+            viewModel.new(body)
         }
+
+        viewModel.onPostCreated
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+            { onNewPostSuccess() },
+            { it.printStackTrace() })
+            .addTo(disposables)
     }
 
+
+    private fun onNewPostSuccess() {
+        post_body_view.clear()
+        (activity as? HomeFeedMvRxActivity)?.close()
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -71,10 +103,23 @@ class NewPostMvRxFragment : BaseMvRxFragment() {
         val isLoading = state.newPostRequest is Loading
         new_post_progress_bar.showOrGone(isLoading)
         post_body_view.isEnabled = !isLoading
+
+
     }
 
-    private fun onnBackPressed() {
-        (activity as? HomeFeedMvRxActivity)?.onBackPressed()
+//    private fun onBackPressed() {
+//        (activity as? HomeFeedMvRxActivity)?.onBackPressed()
+//    }
+
+    override fun onBackPressed(): Boolean {
+//        (activity as? HomeFeedMvRxActivity)?.onBackPressed()
+        return false
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        disposables.dispose()
+        viewModel.dispose()
     }
 
 }
