@@ -1,5 +1,6 @@
 package com.abaz.twitterish.network
 
+import com.abaz.twitterish.data.repository.SharedPreferenceRepository
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -15,12 +16,18 @@ import java.util.concurrent.TimeUnit
  * @author: Anthony Busto
  * @date:   2019-08-28
  */
-class RetrofitProvider(private val okHttpClientProvider: OkHttpClientProvider) {
+class RetrofitProvider(private val okHttpClientProvider: OkHttpClientProvider
+) {
 
     fun provide(): Retrofit = Retrofit.Builder()
-        .addConverterFactory(GsonConverterFactory.create(GsonBuilder().registerTypeAdapter(
-            Date::class.java,
-            DateTimeDeserializer()).create()))
+        .addConverterFactory(
+            GsonConverterFactory.create(
+                GsonBuilder().registerTypeAdapter(
+                    Date::class.java,
+                    DateTimeDeserializer()
+                ).create()
+            )
+        )
 
         .client(okHttpClientProvider.provide())
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -31,23 +38,23 @@ class RetrofitProvider(private val okHttpClientProvider: OkHttpClientProvider) {
 }
 
 
-class OkHttpClientProvider {
+class OkHttpClientProvider(private val sharedPrefs: SharedPreferenceRepository) {
 
     companion object {
         //for testing early on
-        const val TOKEN = "2CACFC07BE0A61310E6599331D343CA2DCDF92EE31355EB2A0B2D417ED47DA11"
+        const val TOKEN = "BA11606C57548ACEDE699ACB47EE105933AD5FC5E3BFB2DD6B4D6E7AF1F397E1"
     }
 
     private val logging = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
-    fun provide() =   OkHttpClient.Builder()
+    fun provide(): OkHttpClient = OkHttpClient.Builder()
 //       OkHttpClient().newBuilder()
         .addInterceptor(logging)
         .addInterceptor {
             val newRequest = it.request().newBuilder()
-                .addHeader("Authorization", "Bearer $TOKEN")
+                .addHeader("Authorization", "Bearer ${sharedPrefs.userToken()}")
                 .addHeader("Content-Type", "application/json")
                 .build()
             it.proceed(newRequest)
