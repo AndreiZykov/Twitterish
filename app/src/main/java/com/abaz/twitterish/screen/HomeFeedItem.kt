@@ -6,6 +6,7 @@ import com.abaz.twitterish.ColorInt
 import com.abaz.twitterish.R
 import com.abaz.twitterish.db.model.LikeDislikeStatus
 import com.abaz.twitterish.db.model.Post
+import com.abaz.twitterish.utils.extensions.hide
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.layout_post_2.view.*
@@ -86,6 +87,8 @@ class HomeFeedItem(
                 onDislike(postId)
             }
 
+
+
 //            share_text.text = "SHARE"
 
             val thumbsIconsPair: Pair<Int, Int> = when {
@@ -123,13 +126,13 @@ class HomeFeedItem(
 
     override fun getId(): Long = post.id
 
-    override fun getLayout() = R.layout.layout_post
+    override fun getLayout() = R.layout.layout_post_2
 
 
     companion object {
         fun create(post: Post, vm: HomeFeedMvRxViewModel) = HomeFeedItem(
             post = post,
-            onReply = { vm.reply(it) },
+            onReply = {  },
             onRepost = { vm.repost(it) },
             onLike = { vm.like(it) },
             onDislike = { vm.dislike(it) }

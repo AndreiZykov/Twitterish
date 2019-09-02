@@ -6,6 +6,7 @@ import com.abaz.twitterish.ColorInt
 import com.abaz.twitterish.R
 import com.abaz.twitterish.db.model.LikeDislikeStatus
 import com.abaz.twitterish.db.model.Post
+import com.abaz.twitterish.utils.extensions.hide
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.layout_reply.view.*
@@ -69,7 +70,8 @@ class PostItem(
             thumbs_up_icon.setColorFilter(thumbsIconsPair.first, PorterDuff.Mode.SRC_ATOP)
             thumbs_down_icon.setColorFilter(thumbsIconsPair.second, PorterDuff.Mode.SRC_ATOP)
 
-
+            reply_layout.hide()
+            share_layout.hide()
         }
 
     }
@@ -84,7 +86,7 @@ class PostItem(
     companion object {
         fun create(post: Post, vm: HomeFeedMvRxViewModel) = PostItem(
             post = post,
-            onReply = { vm.reply(it) },
+            onReply = { },
             onRepost = { vm.repost(it) },
             onLike = { vm.like(it) },
             onDislike = { vm.dislike(it) }

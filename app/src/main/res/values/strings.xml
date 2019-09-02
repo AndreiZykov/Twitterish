@@ -13,4 +13,6 @@
     <string name="error_message_user_name_not_found">User Name Not Found</string>
     <string name="error_message_empty_user_name">Empty User Name</string>
     <string name="error_message_empty_password">Empty Password</string>
+    <string name="replying_to_name_goes_here">Replying to \'name goes here\'</string>
+    <string name="post_your_reply">Post your reply</string>
 </resources>

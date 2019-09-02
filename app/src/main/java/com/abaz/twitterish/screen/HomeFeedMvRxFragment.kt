@@ -76,7 +76,7 @@ class HomeFeedMvRxFragment : BaseTechTalkFragment() {
 
         adapter.updateAsync(state.feed.map { post ->
             HomeFeedItem(post = post,
-                onReply = { viewModel.reply(it) },
+                onReply = { },
                 onRepost = { viewModel.repost(it) },
                 onLike = { viewModel.like(it) },
                 onDislike = { viewModel.dislike(it) }

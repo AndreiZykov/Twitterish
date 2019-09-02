@@ -8,11 +8,11 @@ import kotlinx.android.synthetic.main.fragment_home_feed.*
 abstract class BaseTechTalkFragment : BaseMvRxFragment() {
 
 
-
-
     abstract fun onBackPressed(): Boolean
 
     fun close() {
         (activity as? HomeFeedMvRxActivity)?.close()
     }
+
+    fun homeFeedActivity(): HomeFeedMvRxActivity = (activity as HomeFeedMvRxActivity)
 }

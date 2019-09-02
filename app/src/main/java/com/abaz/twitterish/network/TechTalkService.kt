@@ -31,6 +31,10 @@ interface TechTalkService {
     @POST("post/{id}/dislike")
     fun dislike(@Path("id") id: Long): Single<ResponseObject<Post>>
 
+    @POST("post/{id}/reply")
+    fun reply(@Path("id") id: Long,
+              @Body reply: PostBodyParams): Single<ResponseObject<Post>>
+
     @POST("signIn")
     fun login(@Body user: LoginRequest): Observable<ResponseObject<User>>
 
@@ -56,6 +60,8 @@ class TechTalkApi(provider: RetrofitProvider) {
     fun like(id: Long): Single<ResponseObject<Post>> = service.like(id)
 
     fun dislike(id: Long): Single<ResponseObject<Post>> = service.dislike(id)
+
+    fun reply(id: Long, @Body reply: PostBodyParams): Single<ResponseObject<Post>> = service.reply(id, reply)
 
     fun new(post: PostBodyParams): Single<ResponseObject<Post>> = service.new(post)
 

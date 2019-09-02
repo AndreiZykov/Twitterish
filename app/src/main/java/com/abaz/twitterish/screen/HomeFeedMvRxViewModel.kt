@@ -2,6 +2,7 @@ package com.abaz.twitterish.screen
 
 import com.abaz.printlnDebug
 import com.abaz.twitterish.db.model.Post
+import com.abaz.twitterish.db.model.PostBodyParams
 import com.abaz.twitterish.db.model.Posts
 import com.abaz.twitterish.mvrx.MvRxViewModel
 import com.abaz.twitterish.network.TechTalkApi
@@ -29,6 +30,7 @@ data class HomeFeedState(
 //    val selectedPost: Post? = null,
     val selectedPostRepliesRequest: Async<PostListResponse> = Uninitialized,
     val selectedPostReplies: Posts = emptyList(),
+    val replyRequest: Async<ResponseObject<Post>> = Uninitialized,
     val likeRequest: Async<ResponseObject<Post>> = Uninitialized,
     val newPostRequest: Async<ResponseObject<Post>> = Uninitialized
 ) : MvRxState
@@ -226,8 +228,26 @@ class HomeFeedMvRxViewModel(
             }
     }
 
-    fun reply(id: Long) {
+    fun reply(id: Long, reply: PostBodyParams) = withState {  state ->
         println("DEBUG::reply CLICKED WITH ID = $id")
+        api.reply(id, reply)
+            .subscribeOn(Schedulers.io())
+            .execute {
+                printlnDebug("reply execute callback")
+                val responseObject = it()?.responseObject
+                if(responseObject != null) {
+                    copy(
+                        replyRequest = it,
+                        selectedPostReplies = selectedPostReplies.add(responseObject, 0)
+                    )
+                } else {
+                    copy(
+                        replyRequest = it,
+                        selectedPostReplies = selectedPostReplies
+                    )
+                }
+
+            }
     }
 
 
@@ -272,6 +292,15 @@ class HomeFeedMvRxViewModel(
         }
     }
 
+
+    fun resetSelectedPost() = withState { state ->
+        setState {
+            copy(selectedPostRepliesRequest = Uninitialized,
+                selectedPostReplies = emptyList(),
+                replyRequest = Uninitialized,
+                selectedPostId = null)
+        }
+    }
 
     fun fetchReplies(id: Long) = withState { state ->
 
