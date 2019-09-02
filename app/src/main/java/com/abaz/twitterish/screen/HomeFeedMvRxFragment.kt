@@ -11,11 +11,11 @@ import com.abaz.printlnDebug
 import com.abaz.twitterish.PaginationListener
 import com.abaz.twitterish.R
 import com.abaz.twitterish.screen.new_post.NewPostMvRxFragment
-import com.abaz.twitterish.screen.postdetails.PostDetailsFragment
-import com.abaz.twitterish.utils.extensions.showIf
+import com.abaz.twitterish.screen.postdetails.PostDetailsMvRxFragment
 import com.abaz.twitterish.utils.extensions.showOrGone
 import com.airbnb.mvrx.*
 import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.fragment_home_feed.*
 
@@ -91,9 +91,16 @@ class HomeFeedMvRxFragment : BaseTechTalkFragment() {
 
     private fun goToDetails(id: Long) {
         (activity as? HomeFeedMvRxActivity)?.showFragment(
-            PostDetailsFragment.newInstance(id), "PostDetailsFragment"
+            PostDetailsMvRxFragment.newInstance(id), "PostDetailsMvRxFragment"
         )
     }
+
+
+//    private fun goToDetails(item: Item) {
+//        (activity as? HomeFeedMvRxActivity)?.showFragment(
+//            PostDetailsMvRxFragment.newInstance(id), "PostDetailsMvRxFragment"
+//        )
+//    }
 
     override fun onBackPressed(): Boolean {
         return true

@@ -21,6 +21,10 @@ interface TechTalkService {
     @GET("feed")
     fun feed(@Query("page") page: Int): Observable<PostListResponse>
 
+    @GET("post/{id}/replies")
+    fun replies(@Path("id") id: Long,
+                @Query("page") page: Int): Observable<PostListResponse>
+
     @POST("post/{id}/like")
     fun like(@Path("id") id: Long): Single<ResponseObject<Post>>
 
@@ -46,6 +50,8 @@ class TechTalkApi(provider: RetrofitProvider) {
     private val service = provider.provide().create(TechTalkService::class.java)
 
     fun feed(page: Int): Observable<PostListResponse> = service.feed(page)
+
+    fun replies(postId: Long, page: Int): Observable<PostListResponse> = service.replies(postId,page)
 
     fun like(id: Long): Single<ResponseObject<Post>> = service.like(id)
 

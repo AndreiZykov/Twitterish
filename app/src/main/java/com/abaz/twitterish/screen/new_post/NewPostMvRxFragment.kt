@@ -119,7 +119,7 @@ class NewPostMvRxFragment : BaseTechTalkFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         disposables.dispose()
-        viewModel.dispose()
+        //viewModel.dispose()
     }
 
 }
