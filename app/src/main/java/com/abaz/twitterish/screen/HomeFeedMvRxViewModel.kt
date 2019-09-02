@@ -7,10 +7,7 @@ import com.abaz.twitterish.mvrx.MvRxViewModel
 import com.abaz.twitterish.network.TechTalkApi
 import com.abaz.twitterish.network.response.PostListResponse
 import com.abaz.twitterish.network.response.ResponseObject
-import com.abaz.twitterish.utils.extensions.add
-import com.abaz.twitterish.utils.extensions.addTo
-import com.abaz.twitterish.utils.extensions.copy
-import com.abaz.twitterish.utils.extensions.upsert
+import com.abaz.twitterish.utils.extensions.*
 import com.airbnb.mvrx.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -18,6 +15,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import org.koin.android.ext.android.inject
+import java.util.concurrent.TimeUnit
 
 /**
  * @author: Anthony Busto
@@ -28,6 +26,9 @@ data class HomeFeedState(
     val feedRequest: Async<PostListResponse> = Uninitialized,
     val feed: Posts = emptyList(),
     val selectedPostId: Long? = null,
+//    val selectedPost: Post? = null,
+    val selectedPostRepliesRequest: Async<PostListResponse> = Uninitialized,
+    val selectedPostReplies: Posts = emptyList(),
     val likeRequest: Async<ResponseObject<Post>> = Uninitialized,
     val newPostRequest: Async<ResponseObject<Post>> = Uninitialized
 ) : MvRxState
@@ -64,7 +65,7 @@ class HomeFeedMvRxViewModel(
                     feedRequest = it,
                     feed = feed + (it()?.responseList ?: emptyList())
                 )
-            }.addTo(disposables)
+            }
     }
 
     fun updateFeed() = withState { state ->
@@ -77,7 +78,7 @@ class HomeFeedMvRxViewModel(
                     feedRequest = it,
                     feed = it()?.responseList ?: feed
                 )
-            }.addTo(disposables)
+            }
     }
 
 
@@ -97,7 +98,28 @@ class HomeFeedMvRxViewModel(
                 } else {
                     copy(newPostRequest =  it)
                 }
-            }.addTo(disposables)
+            }
+    }
+
+    fun repost(id: Long) {
+        println("DEBUG::repost CLICKED WITH ID = $id")
+        api.repost(id)
+            .doOnSuccess { updateFeed() }
+            .subscribeOn(Schedulers.io())
+            .execute {
+                val responseObject =  it.invoke()?.responseObject
+                if (responseObject!= null) {
+                    copy(
+                        newPostRequest = it,
+                        feed = feed.add(responseObject)
+                    )
+                } else {
+//                    copy(newPostRequest = it,
+//                        feed = feed.delete { p -> p.originalPost?.id == id})
+
+                    copy(newPostRequest = it)
+                }
+            }
     }
 
     fun like(id: Long) = withState { state ->
@@ -148,7 +170,7 @@ class HomeFeedMvRxViewModel(
                     likeRequest = it,
                     feed = newFeed
                 )
-            }.addTo(disposables)
+            }
 
     }
 
@@ -201,29 +223,14 @@ class HomeFeedMvRxViewModel(
                     likeRequest = it,
                     feed = newFeed
                 )
-            }.addTo(disposables)
+            }
     }
 
     fun reply(id: Long) {
         println("DEBUG::reply CLICKED WITH ID = $id")
     }
 
-    fun repost(id: Long) {
-        println("DEBUG::repost CLICKED WITH ID = $id")
 
-        api.repost(id)
-            .subscribeOn(Schedulers.io())
-            .execute {
-                if (it.invoke()?.responseObject != null) {
-                    copy(
-                        newPostRequest = it,
-                        feed = feed.copy(0, it.invoke()?.responseObject!!)
-                    )
-                } else {
-                    copy(newPostRequest = it)
-                }
-            }.addTo(disposables)
-    }
 
     fun handleClicks(clicks: Observable<PostExtrasIntent>) {
         disposables.add(
@@ -247,6 +254,70 @@ class HomeFeedMvRxViewModel(
                 { it.printStackTrace() }
             )
         )
+    }
+
+//    fun selectPost(post: Post) = withState { state ->
+//        setState {
+//            copy(selectedPost = post)
+//        }
+//    }
+
+
+    fun selectPost(postId: Long) = withState { state ->
+
+        printlnDebug("selectPost postId= $postId")
+
+        setState {
+            copy(selectedPostId = postId)
+        }
+    }
+
+
+    fun fetchReplies(id: Long) = withState { state ->
+
+        /*
+        if (state.feedRequest is Loading) return@withState
+        api.feed(++page)
+            .subscribeOn(Schedulers.io())
+            .execute {
+                copy(
+                    feedRequest = it,
+                    feed = feed + (it()?.responseList ?: emptyList())
+                )
+            }
+       */
+
+        printlnDebug("fetchReplies postId= $id")
+        api.replies(id,1)
+            .delay(300, TimeUnit.MILLISECONDS)
+            .subscribeOn(Schedulers.io())
+            .execute {
+                copy(
+                    selectedPostRepliesRequest = it,
+                    selectedPostReplies = selectedPostReplies + (it()?.responseList ?: emptyList())
+                )
+            }
+        /*
+
+        api.dislike(id)
+            .subscribeOn(Schedulers.io())
+            .execute {
+                printlnDebug("rating execute callback")
+
+                printlnDebug("${it()}")
+
+                printlnDebug("${it()?.responseObject}")
+
+                val newFeed = it()?.responseObject?.let { post ->
+                    feed.copy(indexOf, post)
+                } ?: feed
+
+                copy(
+                    likeRequest = it,
+                    feed = newFeed
+                )
+            }
+         */
     }
 
     fun dispose() {

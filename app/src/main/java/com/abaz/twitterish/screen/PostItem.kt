@@ -8,36 +8,17 @@ import com.abaz.twitterish.db.model.LikeDislikeStatus
 import com.abaz.twitterish.db.model.Post
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
-import kotlinx.android.synthetic.main.layout_post_2.view.*
+import kotlinx.android.synthetic.main.layout_reply.view.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * import kotlinx.android.synthetic.main.layout_post.*
- *
- *
- * import com.xwray.groupie.kotlinandroidextensions.ViewHolder
- *
- * import com.xwray.groupie.ViewHolder
- */
-
-/**
  * @author: Anthony Busto
- * @date:   2019-08-28
+ * @date:   2019-09-02
  */
 
-sealed class PostExtrasIntent(open val postId: Long) {
-    data class Reply(override val postId: Long) : PostExtrasIntent(postId)
-    data class Repost(override val postId: Long) : PostExtrasIntent(postId)
-    data class Like(override val postId: Long) : PostExtrasIntent(postId)
-    data class Dislike(override val postId: Long) : PostExtrasIntent(postId)
-}
-
-
-
-
-class HomeFeedItem(
+class PostItem(
     private val post: Post,
     private val onReply: (postId: Long) -> Unit,
     private val onRepost: (postId: Long) -> Unit,
@@ -45,11 +26,7 @@ class HomeFeedItem(
     private val onDislike: (postId: Long) -> Unit
 ) : Item() {
 
-//    val df: DateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-
     private val df: DateFormat = SimpleDateFormat("MMM,dd", Locale.getDefault())
-
-//    private val intents: PublishSubject<PostExtrasIntent> = PublishSubject.create()
 
     private val postId = post.id
 
@@ -59,24 +36,11 @@ class HomeFeedItem(
             user_name.text = post.userName
             post_date_time.text = df.format(post.date!!)
             reply_count_text.text = post.replyCount.toString()
-//            repost_count_text.text = post.repostCount.toString()
             rating_text.text = post.likesRating.toString()
-
-//            Observable.merge(
-//                reply_layout.clicks().map { Reply(postId) },
-//                repost_layout.clicks().map { Repost(postId) },
-//                thumbs_up_icon.clicks().map { Like(postId) },
-//                thumbs_down_icon.clicks().map { Dislike(postId) }
-//            ).subscribe(intents)
-
 
             reply_layout.setOnClickListener {
                 onReply(postId)
             }
-
-//            repost_layout.setOnClickListener {
-//                onRepost(postId)
-//            }
 
             thumbs_up_icon.setOnClickListener {
                 onLike(postId)
@@ -85,8 +49,6 @@ class HomeFeedItem(
             thumbs_down_icon.setOnClickListener {
                 onDislike(postId)
             }
-
-//            share_text.text = "SHARE"
 
             val thumbsIconsPair: Pair<Int, Int> = when {
                 post.likeDislikeStatus == LikeDislikeStatus.Liked -> Pair(
@@ -107,13 +69,6 @@ class HomeFeedItem(
             thumbs_up_icon.setColorFilter(thumbsIconsPair.first, PorterDuff.Mode.SRC_ATOP)
             thumbs_down_icon.setColorFilter(thumbsIconsPair.second, PorterDuff.Mode.SRC_ATOP)
 
-//            val repostIconColor = if (post.isRepostedByMe) {
-//                ColorInt.COLOR_ACCENT
-//            } else {
-//                ColorInt.GRAY
-//            }
-
-//            repost_count_icon.setColorFilter(repostIconColor, PorterDuff.Mode.SRC_ATOP)
 
         }
 
@@ -123,11 +78,11 @@ class HomeFeedItem(
 
     override fun getId(): Long = post.id
 
-    override fun getLayout() = R.layout.layout_post
+    override fun getLayout() = R.layout.layout_reply
 
 
     companion object {
-        fun create(post: Post, vm: HomeFeedMvRxViewModel) = HomeFeedItem(
+        fun create(post: Post, vm: HomeFeedMvRxViewModel) = PostItem(
             post = post,
             onReply = { vm.reply(it) },
             onRepost = { vm.repost(it) },

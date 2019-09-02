@@ -19,6 +19,7 @@ enum class LikeDislikeStatus {
 typealias Posts = List<Post>
 fun Posts.findPost(id: Long) = firstOrNull { it.id == id }
 
+//@Parcelize
 data class Post(
     @PrimaryKey(autoGenerate = false)
     val id: Long = 0,
