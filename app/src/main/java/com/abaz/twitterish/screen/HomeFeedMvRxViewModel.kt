@@ -1,6 +1,7 @@
 package com.abaz.twitterish.screen
 
 import com.abaz.printlnDebug
+import com.abaz.twitterish.data.PostDataSource
 import com.abaz.twitterish.db.model.Post
 import com.abaz.twitterish.db.model.PostBodyParams
 import com.abaz.twitterish.db.model.Posts
@@ -41,6 +42,7 @@ data class HomeFeedState(
 
 class HomeFeedMvRxViewModel(
     initialState: HomeFeedState,
+    private val postDataSource: PostDataSource,
     private val api: TechTalkApi
 ) : MvRxViewModel<HomeFeedState>(initialState, debugMode = true) {
 
@@ -60,7 +62,7 @@ class HomeFeedMvRxViewModel(
 
     fun fetchFeed() = withState { state ->
         if (state.feedRequest is Loading) return@withState
-        api.feed(++page)
+        postDataSource.feed(++page)
             .subscribeOn(Schedulers.io())
             .execute {
                 copy(
@@ -86,7 +88,7 @@ class HomeFeedMvRxViewModel(
 
     fun new(body: String) = withState { state ->
         printlnDebug("calling new, body=$body")
-        api.new(body)
+        postDataSource.new(body)
             .doOnSuccess { onPostCreatedSubject.onNext(Unit) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -364,7 +366,9 @@ class HomeFeedMvRxViewModel(
 
             val api: TechTalkApi by viewModelContext.activity.inject()
 
-            return HomeFeedMvRxViewModel(state, api)
+            val postDataSource: PostDataSource by viewModelContext.activity.inject()
+
+            return HomeFeedMvRxViewModel(state, postDataSource, api)
         }
 
         override fun initialState(viewModelContext: ViewModelContext): HomeFeedState? {

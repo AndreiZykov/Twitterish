@@ -3,7 +3,9 @@ package com.abaz.twitterish
 import android.content.Context
 import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
+import com.abaz.twitterish.data.PostDataSource
 import com.abaz.twitterish.data.UserDataSource
+import com.abaz.twitterish.data.repository.PostRepository
 import com.abaz.twitterish.network.OkHttpClientProvider
 import com.abaz.twitterish.network.RetrofitProvider
 import com.abaz.twitterish.network.TechTalkApi
@@ -49,6 +51,8 @@ val diModule = module {
     factory { TechTalkApi(get()) }
 
     single<UserDataSource> { UserRepository(get(), get()) }
+
+    single<PostDataSource> { PostRepository(get(), get()) }
 
 }
 

@@ -10,4 +10,5 @@ interface UserDataSource {
     fun login(username: Username, password: Password): Observable<ResponseObject<User>>
     fun signUp(username: Username, password: Password): Observable<ResponseObject<User>>
     fun isLoggedIn(): Boolean
+    fun userId(): Long
 }

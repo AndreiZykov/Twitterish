@@ -65,9 +65,9 @@ class TechTalkApi(provider: RetrofitProvider) {
 
     fun new(post: PostBodyParams): Single<ResponseObject<Post>> = service.new(post)
 
-    fun new(body: String): Single<ResponseObject<Post>> = service.new(
+    fun new(userId: Long, body: String): Single<ResponseObject<Post>> = service.new(
         PostBodyParams(
-            userId = 23,
+            userId = userId,
             body = body
         )
     )

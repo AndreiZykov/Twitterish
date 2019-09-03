@@ -5,19 +5,36 @@ import android.content.Context
 // temporary solution
 class SharedPreferenceRepository(private val ctx: Context) {
 
-    private var bareadToker: String? = null
+    private var barearToker: String? = null
+
+    private var userId: Long? = null
 
     fun userToken(): String? {
-        if (bareadToker == null) {
-            bareadToker = getStringFromSharedPreference(BEARER_TOKEN_STRING_IDENTIFIER)
+        if (barearToker == null) {
+            barearToker = getStringFromSharedPreference(BEARER_TOKEN_STRING_IDENTIFIER)
         }
-        return bareadToker
+        return barearToker
     }
 
     fun saveUserToken(token: String?) {
         saveStringToSharedPreferences(BEARER_TOKEN_STRING_IDENTIFIER, token)
-        bareadToker = token
+        barearToker = token
     }
+
+    fun saveUserId(id: Long?) {
+        saveStringToSharedPreferences(USER_ID_STRING_IDENTIFIER, "$id")
+        userId = id
+    }
+
+    fun getUserId(): Long {
+        if (userId == null) {
+            userId = runCatching {
+                getStringFromSharedPreference(USER_ID_STRING_IDENTIFIER)?.toLong()
+            }.getOrNull()
+        }
+        return userId ?: INVALID_USER_ID
+    }
+
 
     private fun saveStringToSharedPreferences(key: String, value: String?) {
         ctx.getSharedPreferences(TWITTER_ISH_SHARED_PREFERENCE_NAME, 0)
@@ -32,6 +49,8 @@ class SharedPreferenceRepository(private val ctx: Context) {
     companion object {
         private const val TWITTER_ISH_SHARED_PREFERENCE_NAME = "TWITTER_ISH_SHARED_PREFERENCE_NAME"
         private const val BEARER_TOKEN_STRING_IDENTIFIER = "BEARER_TOKEN_STRING_IDENTIFIER"
+        private const val USER_ID_STRING_IDENTIFIER = "BEARER_TOKEN_STRING_IDENTIFIER"
+        private const val INVALID_USER_ID = -1L
     }
 
 }
