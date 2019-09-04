@@ -2,6 +2,7 @@ package com.abaz.twitterish.screen
 
 import com.abaz.printlnDebug
 import com.abaz.twitterish.data.PostDataSource
+import com.abaz.twitterish.data.UserDataSource
 import com.abaz.twitterish.db.model.Post
 import com.abaz.twitterish.db.model.PostBodyParams
 import com.abaz.twitterish.db.model.Posts
@@ -13,6 +14,7 @@ import com.abaz.twitterish.utils.extensions.*
 import com.airbnb.mvrx.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
@@ -33,7 +35,8 @@ data class HomeFeedState(
     val selectedPostReplies: Posts = emptyList(),
     val replyRequest: Async<ResponseObject<Post>> = Uninitialized,
     val likeRequest: Async<ResponseObject<Post>> = Uninitialized,
-    val newPostRequest: Async<ResponseObject<Post>> = Uninitialized
+    val newPostRequest: Async<ResponseObject<Post>> = Uninitialized,
+    val isLoggedIn: Boolean = true
 ) : MvRxState
 
 /**
@@ -43,6 +46,7 @@ data class HomeFeedState(
 class HomeFeedMvRxViewModel(
     initialState: HomeFeedState,
     private val postDataSource: PostDataSource,
+    private val userDataSource: UserDataSource,
     private val api: TechTalkApi
 ) : MvRxViewModel<HomeFeedState>(initialState, debugMode = true) {
 
@@ -57,7 +61,16 @@ class HomeFeedMvRxViewModel(
 
     init {
         logStateChanges()
-        fetchFeed()
+        userDataSource.onLogInStateChanged()
+            .subscribe({
+                // hack
+                if (it.value) {
+                    page = 0
+                    fetchFeed()
+                }
+                setState { copy(isLoggedIn = it.value) }
+            }) {}
+            .disposeOnClear()
     }
 
     fun fetchFeed() = withState { state ->
@@ -93,14 +106,14 @@ class HomeFeedMvRxViewModel(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .execute {
-                val responseObject =  it.invoke()?.responseObject
+                val responseObject = it.invoke()?.responseObject
                 if (responseObject != null) {
                     copy(
                         newPostRequest = it,
                         feed = feed.add(value = responseObject)
                     )
                 } else {
-                    copy(newPostRequest =  it)
+                    copy(newPostRequest = it)
                 }
             }
     }
@@ -111,8 +124,8 @@ class HomeFeedMvRxViewModel(
             .doOnSuccess { updateFeed() }
             .subscribeOn(Schedulers.io())
             .execute {
-                val responseObject =  it.invoke()?.responseObject
-                if (responseObject!= null) {
+                val responseObject = it.invoke()?.responseObject
+                if (responseObject != null) {
                     copy(
                         newPostRequest = it,
                         feed = feed.add(responseObject)
@@ -230,14 +243,14 @@ class HomeFeedMvRxViewModel(
             }
     }
 
-    fun reply(id: Long, reply: PostBodyParams) = withState {  state ->
+    fun reply(id: Long, reply: PostBodyParams) = withState { state ->
         println("DEBUG::reply CLICKED WITH ID = $id")
         api.reply(id, reply)
             .subscribeOn(Schedulers.io())
             .execute {
                 printlnDebug("reply execute callback")
                 val responseObject = it()?.responseObject
-                if(responseObject != null) {
+                if (responseObject != null) {
                     copy(
                         replyRequest = it,
                         selectedPostReplies = selectedPostReplies.add(responseObject, 0)
@@ -251,7 +264,6 @@ class HomeFeedMvRxViewModel(
 
             }
     }
-
 
 
     fun handleClicks(clicks: Observable<PostExtrasIntent>) {
@@ -297,10 +309,12 @@ class HomeFeedMvRxViewModel(
 
     fun resetSelectedPost() = withState { state ->
         setState {
-            copy(selectedPostRepliesRequest = Uninitialized,
+            copy(
+                selectedPostRepliesRequest = Uninitialized,
                 selectedPostReplies = emptyList(),
                 replyRequest = Uninitialized,
-                selectedPostId = null)
+                selectedPostId = null
+            )
         }
     }
 
@@ -319,7 +333,7 @@ class HomeFeedMvRxViewModel(
        */
 
         printlnDebug("fetchReplies postId= $id")
-        api.replies(id,1)
+        api.replies(id, 1)
             .delay(300, TimeUnit.MILLISECONDS)
             .subscribeOn(Schedulers.io())
             .execute {
@@ -355,12 +369,22 @@ class HomeFeedMvRxViewModel(
         disposables.dispose()
     }
 
+    fun signOut() {
+        userDataSource.signOut()
+            .subscribeOn(Schedulers.io())
+            .observeOn(mainThread())
+            .execute { copy(isLoggedIn = false) }
+    }
+
 
     companion object : MvRxViewModelFactory<HomeFeedMvRxViewModel, HomeFeedState> {
 
         const val ITEMS_PER_PAGE = 10
 
-        override fun create(viewModelContext: ViewModelContext, state: HomeFeedState): HomeFeedMvRxViewModel {
+        override fun create(
+            viewModelContext: ViewModelContext,
+            state: HomeFeedState
+        ): HomeFeedMvRxViewModel {
 //            val api: TechTalkApi by (viewModelContext as? FragmentViewModelContext)
 //                ?.fragment?.inject()
 
@@ -368,7 +392,9 @@ class HomeFeedMvRxViewModel(
 
             val postDataSource: PostDataSource by viewModelContext.activity.inject()
 
-            return HomeFeedMvRxViewModel(state, postDataSource, api)
+            val userDataSource: UserDataSource by viewModelContext.activity.inject()
+
+            return HomeFeedMvRxViewModel(state, postDataSource, userDataSource, api)
         }
 
         override fun initialState(viewModelContext: ViewModelContext): HomeFeedState? {

@@ -15,4 +15,6 @@
     <string name="error_message_empty_password">Empty Password</string>
     <string name="replying_to_name_goes_here">Replying to \'name goes here\'</string>
     <string name="post_your_reply">Post your reply</string>
+    <string name="home_feed_fragment_toolbar_title">Feed</string>
+    <string name="sign_out_button_title">sign out</string>
 </resources>

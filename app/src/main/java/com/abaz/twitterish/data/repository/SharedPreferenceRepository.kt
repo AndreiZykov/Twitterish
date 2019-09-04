@@ -49,7 +49,7 @@ class SharedPreferenceRepository(private val ctx: Context) {
     companion object {
         private const val TWITTER_ISH_SHARED_PREFERENCE_NAME = "TWITTER_ISH_SHARED_PREFERENCE_NAME"
         private const val BEARER_TOKEN_STRING_IDENTIFIER = "BEARER_TOKEN_STRING_IDENTIFIER"
-        private const val USER_ID_STRING_IDENTIFIER = "BEARER_TOKEN_STRING_IDENTIFIER"
+        private const val USER_ID_STRING_IDENTIFIER = "USER_ID_STRING_IDENTIFIER"
         private const val INVALID_USER_ID = -1L
     }
 

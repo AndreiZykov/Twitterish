@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -48,6 +49,10 @@ class HomeFeedMvRxFragment : BaseTechTalkFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        sign_out_button.setOnClickListener {
+            viewModel.signOut()
+        }
+
         val multiTypeAdapter = adapter.apply {
             setOnItemClickListener { item, _ ->
                 goToDetails(item.id)
@@ -69,6 +74,12 @@ class HomeFeedMvRxFragment : BaseTechTalkFragment() {
     override fun invalidate() = withState(viewModel) { state ->
 
         printlnDebug("invalidate called: state = $state")
+
+        if(!state.isLoggedIn){
+            homeFeedActivity()
+                .supportFragmentManager
+                .popBackStack()
+        }
 
         swipe_layout.isRefreshing = state.feedRequest is Loading && state.feed.isEmpty()
 

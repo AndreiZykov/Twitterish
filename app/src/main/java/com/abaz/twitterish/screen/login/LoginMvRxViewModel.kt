@@ -31,11 +31,12 @@ enum class LoginError {
     INVALID_PASSWORD
 }
 
-class LoginMvRxViewModel(initialState: LoginState, val userDataSource: UserDataSource) :
+class LoginMvRxViewModel(initialState: LoginState, private val userDataSource: UserDataSource) :
     MvRxViewModel<LoginState>(initialState = initialState, debugMode = BuildConfig.DEBUG) {
 
     init {
-        setState { copy(isLoggedIn = userDataSource.isLoggedIn()) }
+        userDataSource.onLogInStateChanged()
+            .subscribe({ setState { copy(isLoggedIn = it.value) } }) {}.disposeOnClear()
     }
 
     fun emailChanged(email: String) {
@@ -59,14 +60,14 @@ class LoginMvRxViewModel(initialState: LoginState, val userDataSource: UserDataS
                 else -> null
             }
 
-            if(loginError == null){
+            if (loginError == null) {
                 userDataSource.login(Username(state.username), Password(state.password))
                     .subscribeOn(io())
                     .observeOn(mainThread())
                     .execute {
                         copy(
                             loginResponse = it,
-                            isLoggedIn = userDataSource.isLoggedIn(),
+                            isLoggedIn = userDataSource.isLoggedIn().value,
                             loginError = parseError(it)
                         )
                     }
@@ -88,14 +89,14 @@ class LoginMvRxViewModel(initialState: LoginState, val userDataSource: UserDataS
                 else -> null
             }
 
-            if(loginError == null){
+            if (loginError == null) {
                 userDataSource.signUp(Username(state.username), Password(state.password))
                     .subscribeOn(io())
                     .observeOn(mainThread())
                     .execute {
                         copy(
                             loginResponse = it,
-                            isLoggedIn = userDataSource.isLoggedIn(),
+                            isLoggedIn = userDataSource.isLoggedIn().value,
                             loginError = parseError(it)
                         )
                     }
