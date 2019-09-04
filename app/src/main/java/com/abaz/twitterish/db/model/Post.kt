@@ -16,8 +16,7 @@ enum class LikeDislikeStatus {
 }
 
 
-typealias Posts = List<Post>
-fun Posts.findPost(id: Long) = firstOrNull { it.id == id }
+fun List<Post>.findPost(id: Long) = firstOrNull { it.id == id }
 
 //@Parcelize
 data class Post(

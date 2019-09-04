@@ -9,4 +9,5 @@ import io.reactivex.Single
 interface PostDataSource {
     fun new(body: String): Single<ResponseObject<Post>>
     fun feed(page: Int): Observable<PostListResponse>
+    fun reply(postId: Long, body: String): Single<ResponseObject<Post>>
 }

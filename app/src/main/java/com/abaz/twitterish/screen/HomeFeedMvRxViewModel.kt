@@ -4,13 +4,12 @@ import com.abaz.printlnDebug
 import com.abaz.twitterish.data.PostDataSource
 import com.abaz.twitterish.data.UserDataSource
 import com.abaz.twitterish.db.model.Post
-import com.abaz.twitterish.db.model.PostBodyParams
-import com.abaz.twitterish.db.model.Posts
 import com.abaz.twitterish.mvrx.MvRxViewModel
 import com.abaz.twitterish.network.TechTalkApi
 import com.abaz.twitterish.network.response.PostListResponse
 import com.abaz.twitterish.network.response.ResponseObject
-import com.abaz.twitterish.utils.extensions.*
+import com.abaz.twitterish.utils.extensions.add
+import com.abaz.twitterish.utils.extensions.copy
 import com.airbnb.mvrx.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -19,7 +18,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import org.koin.android.ext.android.inject
-import java.util.concurrent.TimeUnit
 
 /**
  * @author: Anthony Busto
@@ -28,15 +26,15 @@ import java.util.concurrent.TimeUnit
 
 data class HomeFeedState(
     val feedRequest: Async<PostListResponse> = Uninitialized,
-    val feed: Posts = emptyList(),
+    val feed: List<Post> = emptyList(),
     val selectedPostId: Long? = null,
-//    val selectedPost: Post? = null,
     val selectedPostRepliesRequest: Async<PostListResponse> = Uninitialized,
-    val selectedPostReplies: Posts = emptyList(),
+    val selectedPostReplies: List<Post> = emptyList(),
     val replyRequest: Async<ResponseObject<Post>> = Uninitialized,
     val likeRequest: Async<ResponseObject<Post>> = Uninitialized,
     val newPostRequest: Async<ResponseObject<Post>> = Uninitialized,
-    val isLoggedIn: Boolean = true
+    val isLoggedIn: Boolean = true,
+    val replyBody: String = ""
 ) : MvRxState
 
 /**
@@ -243,59 +241,22 @@ class HomeFeedMvRxViewModel(
             }
     }
 
-    fun reply(id: Long, reply: PostBodyParams) = withState { state ->
-        println("DEBUG::reply CLICKED WITH ID = $id")
-        api.reply(id, reply)
-            .subscribeOn(Schedulers.io())
-            .execute {
-                printlnDebug("reply execute callback")
-                val responseObject = it()?.responseObject
-                if (responseObject != null) {
-                    copy(
-                        replyRequest = it,
-                        selectedPostReplies = selectedPostReplies.add(responseObject, 0)
-                    )
-                } else {
-                    copy(
-                        replyRequest = it,
-                        selectedPostReplies = selectedPostReplies
-                    )
-                }
-
-            }
-    }
-
-
-    fun handleClicks(clicks: Observable<PostExtrasIntent>) {
-        disposables.add(
-            clicks.subscribe(
-                {
-                    when (it) {
-                        is PostExtrasIntent.Like -> {
-                            println("Like Clicked")
-                        }
-                        is PostExtrasIntent.Dislike -> {
-                            println("Dislike Clicked")
-                        }
-                        is PostExtrasIntent.Reply -> {
-                            println("Reply Clicked")
-                        }
-                        is PostExtrasIntent.Repost -> {
-                            println("Repost Clicked")
-                        }
+    fun reply() = withState { state ->
+        withState { state ->
+            if (state.selectedPostId != null) {
+                postDataSource.reply(state.selectedPostId, state.replyBody)
+                    .subscribeOn(Schedulers.io())
+                    .execute {
+                        printlnDebug("reply execute callback")
+                        val responseObject = it.invoke()?.responseObject
+                        val replyCopy = mutableListOf<Post>().apply { addAll(selectedPostReplies) }
+                        takeIf { responseObject != null }?.let { reply -> replyCopy.add(reply, 0) }
+                        copy(replyRequest = it, selectedPostReplies = replyCopy, replyBody = "")
                     }
-                },
-                { it.printStackTrace() }
-            )
-        )
+            }
+        }
+
     }
-
-//    fun selectPost(post: Post) = withState { state ->
-//        setState {
-//            copy(selectedPost = post)
-//        }
-//    }
-
 
     fun selectPost(postId: Long) = withState { state ->
 
@@ -319,50 +280,15 @@ class HomeFeedMvRxViewModel(
     }
 
     fun fetchReplies(id: Long) = withState { state ->
-
-        /*
-        if (state.feedRequest is Loading) return@withState
-        api.feed(++page)
-            .subscribeOn(Schedulers.io())
-            .execute {
-                copy(
-                    feedRequest = it,
-                    feed = feed + (it()?.responseList ?: emptyList())
-                )
-            }
-       */
-
         printlnDebug("fetchReplies postId= $id")
         api.replies(id, 1)
-            .delay(300, TimeUnit.MILLISECONDS)
             .subscribeOn(Schedulers.io())
             .execute {
                 copy(
                     selectedPostRepliesRequest = it,
-                    selectedPostReplies = selectedPostReplies + (it()?.responseList ?: emptyList())
+                    selectedPostReplies = it()?.responseList ?: emptyList()
                 )
             }
-        /*
-
-        api.dislike(id)
-            .subscribeOn(Schedulers.io())
-            .execute {
-                printlnDebug("rating execute callback")
-
-                printlnDebug("${it()}")
-
-                printlnDebug("${it()?.responseObject}")
-
-                val newFeed = it()?.responseObject?.let { post ->
-                    feed.copy(indexOf, post)
-                } ?: feed
-
-                copy(
-                    likeRequest = it,
-                    feed = newFeed
-                )
-            }
-         */
     }
 
     fun dispose() {
@@ -376,6 +302,26 @@ class HomeFeedMvRxViewModel(
             .execute { copy(isLoggedIn = false) }
     }
 
+    fun onReplyTextChanged(replyBody: String) {
+        setState { copy(replyBody = replyBody) }
+    }
+
+    fun refresh() {
+        withState { state ->
+            if (state.selectedPostId != null) {
+                fetchReplies(state.selectedPostId)
+            }
+        }
+
+    }
+
+    // on resume for post detail screen
+    fun onResume() {
+        withState {
+            setState { copy(replyBody = "") }
+            if (it.selectedPostId != null) fetchReplies(it.selectedPostId)
+        }
+    }
 
     companion object : MvRxViewModelFactory<HomeFeedMvRxViewModel, HomeFeedState> {
 

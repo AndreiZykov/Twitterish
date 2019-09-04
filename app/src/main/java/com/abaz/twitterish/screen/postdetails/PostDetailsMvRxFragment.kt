@@ -15,6 +15,7 @@ import com.abaz.twitterish.screen.HomeFeedMvRxViewModel
 import com.abaz.twitterish.screen.PostItem
 import com.abaz.twitterish.utils.extensions.add
 import com.abaz.twitterish.utils.extensions.clear
+import com.abaz.twitterish.utils.extensions.onTextChange
 import com.airbnb.mvrx.*
 import com.xwray.groupie.Group
 import com.xwray.groupie.GroupAdapter
@@ -47,7 +48,11 @@ class PostDetailsMvRxFragment : BaseMultiTypeFragment() {
         super.onCreate(savedInstanceState)
         printlnDebug("onCreate")
         viewModel.selectPost(postId)
-        viewModel.fetchReplies(postId)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.onResume()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -69,22 +74,20 @@ class PostDetailsMvRxFragment : BaseMultiTypeFragment() {
 
         printlnDebug("onViewCreated")
 
-        val multiTypeAdapter = adapter.apply {
-            setOnItemClickListener { item, _ ->
-
-            }
-        }
+        val multiTypeAdapter = adapter
 
         recycler_view.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = multiTypeAdapter
         }
 
+        reply_body_view.onTextChange(viewModel::onReplyTextChanged)
+
+        send_icon.setOnClickListener { viewModel.reply() }
+
+        post_details_swipe_layout.setOnRefreshListener { viewModel.refresh() }
 
 
-        send_icon.setOnClickListener {
-            viewModel.reply(postId, PostBodyParams(reply_body_view.text.toString(), 23))
-        }
     }
 
     override fun invalidate() = withState(viewModel) { state ->
@@ -107,8 +110,6 @@ class PostDetailsMvRxFragment : BaseMultiTypeFragment() {
 
         if (state.selectedPostRepliesRequest !is Loading) {
 
-            reply_body_view.clear()
-
             if (!state.selectedPostRepliesRequest()?.responseList.isNullOrEmpty()) {
                 list.addAll(state.selectedPostReplies.map {
                     PostItem.create(it, viewModel)
@@ -116,6 +117,13 @@ class PostDetailsMvRxFragment : BaseMultiTypeFragment() {
 
                 adapter.updateAsync(list)
             }
+
+            post_details_swipe_layout.isRefreshing = false
+
+        }
+
+        if(reply_body_view.text.toString() != state.replyBody) {
+            reply_body_view.setText(state.replyBody)
         }
 
     }
