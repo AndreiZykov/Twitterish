@@ -2,31 +2,25 @@ package com.abaz.twitterish.screen.postdetails
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.abaz.printlnDebug
 import com.abaz.twitterish.BaseMultiTypeFragment
 import com.abaz.twitterish.R
-import com.abaz.twitterish.db.model.Post
-import com.abaz.twitterish.db.model.PostBodyParams
 import com.abaz.twitterish.screen.HomeFeedItem
 import com.abaz.twitterish.screen.HomeFeedMvRxViewModel
 import com.abaz.twitterish.screen.PostItem
-import com.abaz.twitterish.utils.extensions.add
-import com.abaz.twitterish.utils.extensions.clear
 import com.abaz.twitterish.utils.extensions.onTextChange
 import com.airbnb.mvrx.*
 import com.xwray.groupie.Group
-import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.fragment_home_feed.*
 import kotlinx.android.synthetic.main.fragment_home_feed.recycler_view
-import kotlinx.android.synthetic.main.fragment_new_post.*
 import kotlinx.android.synthetic.main.fragment_post_details.*
 import kotlinx.android.synthetic.main.fragment_post_details.toolbar
 import kotlinx.android.synthetic.main.reply_to_layout.*
-import kotlinx.android.synthetic.main.reply_to_layout.send_icon
+
 
 /**
  * @author: Anthony Busto
@@ -48,6 +42,7 @@ class PostDetailsMvRxFragment : BaseMultiTypeFragment() {
         super.onCreate(savedInstanceState)
         printlnDebug("onCreate")
         viewModel.selectPost(postId)
+        setHasOptionsMenu(true)
     }
 
     override fun onResume() {
@@ -55,13 +50,13 @@ class PostDetailsMvRxFragment : BaseMultiTypeFragment() {
         viewModel.onResume()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_post_details, container, false)
+    override fun onCreateView(inflater: LayoutInflater, c: ViewGroup?, s: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_post_details, c, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        val activity  = homeFeedActivity()
+        val activity = homeFeedActivity()
         activity.setSupportActionBar(toolbar)
         activity.supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
@@ -86,7 +81,6 @@ class PostDetailsMvRxFragment : BaseMultiTypeFragment() {
         send_icon.setOnClickListener { viewModel.reply() }
 
         post_details_swipe_layout.setOnRefreshListener { viewModel.refresh() }
-
 
     }
 
@@ -122,12 +116,21 @@ class PostDetailsMvRxFragment : BaseMultiTypeFragment() {
 
         }
 
-        if(reply_body_view.text.toString() != state.replyBody) {
+        if (reply_body_view.text.toString() != state.replyBody) {
             reply_body_view.setText(state.replyBody)
         }
 
     }
 
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when (item?.itemId) {
+            android.R.id.home -> {
+                homeFeedActivity().onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 
     companion object {
         fun newInstance(postId: Long) = PostDetailsMvRxFragment().apply {

@@ -6,10 +6,22 @@ import com.abaz.twitterish.ColorInt
 import com.abaz.twitterish.R
 import com.abaz.twitterish.db.model.LikeDislikeStatus
 import com.abaz.twitterish.db.model.Post
+import com.abaz.twitterish.utils.extensions.colorById
 import com.abaz.twitterish.utils.extensions.hide
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
+import kotlinx.android.synthetic.main.layout_post_2.view.*
 import kotlinx.android.synthetic.main.layout_reply.view.*
+import kotlinx.android.synthetic.main.layout_reply.view.post_body
+import kotlinx.android.synthetic.main.layout_reply.view.post_date_time
+import kotlinx.android.synthetic.main.layout_reply.view.rating_text
+import kotlinx.android.synthetic.main.layout_reply.view.reply_count_text
+import kotlinx.android.synthetic.main.layout_reply.view.reply_layout
+import kotlinx.android.synthetic.main.layout_reply.view.share_layout
+import kotlinx.android.synthetic.main.layout_reply.view.thumbs_down_icon
+import kotlinx.android.synthetic.main.layout_reply.view.thumbs_up_icon
+import kotlinx.android.synthetic.main.layout_reply.view.user_circle_icon
+import kotlinx.android.synthetic.main.layout_reply.view.user_name
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -22,6 +34,7 @@ import java.util.*
 class PostItem(
     private val post: Post,
     private val onReply: (postId: Long) -> Unit,
+
     private val onRepost: (postId: Long) -> Unit,
     private val onLike: (postId: Long) -> Unit,
     private val onDislike: (postId: Long) -> Unit
@@ -35,6 +48,10 @@ class PostItem(
         viewHolder.itemView.apply {
             post_body.text = post.body
             user_name.text = post.userName
+            user_circle_icon.apply {
+                letter = post.userName.substring(0,1)
+                colorById(post.userId)
+            }
             post_date_time.text = df.format(post.date!!)
             reply_count_text.text = post.replyCount.toString()
             rating_text.text = post.likesRating.toString()

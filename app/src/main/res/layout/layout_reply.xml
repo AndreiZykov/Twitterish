@@ -8,13 +8,17 @@
                                                    android:padding="10dp">
 
 
-    <ImageView
-            android:id="@+id/user_icon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_female"
+    <com.github.ivbaranov.mli.MaterialLetterIcon
+            android:id="@+id/user_circle_icon"
+            android:layout_width="@dimen/reply_user_icon_size"
+            android:layout_height="@dimen/reply_user_icon_size"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:mli_letter="A"
+            app:mli_shape_type="circle"
+            android:alpha="0.62"
+            app:mli_letter_size="17"
+            />
 
 
     <TextView
@@ -27,8 +31,8 @@
             android:textStyle="bold"
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toStartOf="@+id/layout_ratings"
-            app:layout_constraintStart_toEndOf="@+id/user_icon"
-            app:layout_constraintTop_toTopOf="@+id/user_icon"/>
+            app:layout_constraintStart_toEndOf="@+id/user_circle_icon"
+            app:layout_constraintTop_toTopOf="@+id/user_circle_icon"/>
 
 
     <TextView
@@ -41,7 +45,7 @@
             app:layout_constrainedWidth="true"
             app:layout_constraintBottom_toTopOf="@+id/extras_layout"
             app:layout_constraintEnd_toStartOf="@+id/layout_ratings"
-            app:layout_constraintStart_toEndOf="@id/user_icon"
+            app:layout_constraintStart_toEndOf="@id/user_circle_icon"
             app:layout_constraintTop_toBottomOf="@id/user_name"/>
 
 
@@ -49,12 +53,12 @@
             android:id="@+id/extras_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
+            android:layout_marginStart="9dp"
             android:layout_marginTop="15dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/layout_ratings"
-            app:layout_constraintStart_toEndOf="@id/user_icon"
+            app:layout_constraintStart_toEndOf="@id/user_circle_icon"
             app:layout_constraintTop_toBottomOf="@id/post_body">
 
 

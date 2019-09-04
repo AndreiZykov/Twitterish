@@ -17,4 +17,5 @@
     <string name="post_your_reply">Post your reply</string>
     <string name="home_feed_fragment_toolbar_title">Feed</string>
     <string name="sign_out_button_title">sign out</string>
+    <string name="post_details_fragment_title">Post Details</string>
 </resources>

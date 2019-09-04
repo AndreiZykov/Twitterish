@@ -2,4 +2,5 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="title_text_size">20sp</dimen>
     <dimen name="user_icon_size">56dp</dimen>
+    <dimen name="reply_user_icon_size">38dp</dimen>
 </resources>
