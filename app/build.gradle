@@ -94,6 +94,8 @@ dependencies {
     implementation 'com.airbnb.android:mvrx:1.0.2'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
 
+    implementation 'com.github.ivbaranov:materiallettericon:0.2.3'
+
     // Koin for Kotlin
 //    implementation "org.koin:koin-core:$koin_version"
 

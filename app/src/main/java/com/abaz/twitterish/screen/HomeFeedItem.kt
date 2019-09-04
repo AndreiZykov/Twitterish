@@ -1,18 +1,20 @@
 package com.abaz.twitterish.screen
 
+import android.content.Context
 import android.graphics.PorterDuff
 import com.abaz.printlnDebug
 import com.abaz.twitterish.ColorInt
 import com.abaz.twitterish.R
 import com.abaz.twitterish.db.model.LikeDislikeStatus
 import com.abaz.twitterish.db.model.Post
-import com.abaz.twitterish.utils.extensions.hide
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.layout_post_2.view.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import android.graphics.Color
+
 
 /**
  * import kotlinx.android.synthetic.main.layout_post.*
@@ -58,6 +60,10 @@ class HomeFeedItem(
         viewHolder.itemView.apply {
             post_body.text = post.body
             user_name.text = post.userName
+            user_circle_icon.apply {
+                letter = post.userName.substring(0,1)
+                shapeColor = randomColor(context, post.userId)
+            }
             post_date_time.text = df.format(post.date!!)
             reply_count_text.text = post.replyCount.toString()
 //            repost_count_text.text = post.repostCount.toString()
@@ -128,6 +134,19 @@ class HomeFeedItem(
 
     override fun getLayout() = R.layout.layout_post_2
 
+    private fun randomColor(ctx: Context, id: Long): Int {
+        return runCatching {
+            var resColor = Color.BLACK
+            val arrayId = ctx.resources.getIdentifier("material_colors", "array", ctx.packageName)
+            if (arrayId != 0) {
+                val colors = ctx.resources.obtainTypedArray(arrayId)
+                val index = (id%30).toInt()
+                resColor = colors.getColor(index, Color.BLACK)
+                colors.recycle()
+            }
+            resColor
+        }.getOrDefault(Color.BLACK)
+    }
 
     companion object {
         fun create(post: Post, vm: HomeFeedMvRxViewModel) = HomeFeedItem(

@@ -6,4 +6,41 @@
     <color name="title_text_color">#000000</color>
     <color name="action_text_color">#2196F3</color>
     <color name="white">#ffffff</color>
+
+    <array name="material_colors">
+        <item name="red_700" type="color">#d01716</item>
+        <item name="pink_700" type="color">#c2185b</item>
+        <item name="purple_700" type="color">#7b1fa2</item>
+        <item name="deep_purple_700" type="color">#512da8</item>
+        <item name="indigo_700" type="color">#303f9f</item>
+        <item name="blue_700" type="color">#455ede</item>
+        <item name="light_blue_700" type="color">#0288d1</item>
+        <item name="cyan_700" type="color">#0097a7</item>
+        <item name="teal_700" type="color">#00796b</item>
+        <item name="green_700" type="color">#0a7e07</item>
+        <item name="light_green_700" type="color">#689f38</item>
+        <item name="lime_700" type="color">#afb42b</item>
+        <item name="yellow_700" type="color">#fbc02d</item>
+        <item name="orange_700" type="color">#f57c00</item>
+        <item name="deep_orange_700" type="color">#e64a19</item>
+        <item name="brown_700" type="color">#5d4037</item>
+        <item name="grey_700" type="color">#616161</item>
+        <item name="blue_grey_700" type="color">#455a64</item>
+        <item name="red_A700" type="color">#e00032</item>
+        <item name="pink_A700" type="color">#c51162</item>
+        <item name="purple_A700" type="color">#aa00ff</item>
+        <item name="deep_purple_A700" type="color">#6200ea</item>
+        <item name="indigo_A700" type="color">#304ffe</item>
+        <item name="blue_A700" type="color">#4d69ff</item>
+        <item name="light_blue_A700" type="color">#0091ea</item>
+        <item name="cyan_A700" type="color">#00b8d4</item>
+        <item name="teal_A700" type="color">#00bfa5</item>
+        <item name="green_A700" type="color">#12c700</item>
+        <item name="light_green_A700" type="color">#64dd17</item>
+        <item name="lime_A700" type="color">#aeea00</item>
+        <item name="yellow_A700" type="color">#ffd600</item>
+        <item name="orange_A700" type="color">#ff6d00</item>
+        <item name="deep_orange_A700" type="color">#dd2c00</item>
+    </array>
+
 </resources>

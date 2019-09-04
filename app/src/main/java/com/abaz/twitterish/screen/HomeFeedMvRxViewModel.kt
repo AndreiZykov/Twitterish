@@ -102,7 +102,7 @@ class HomeFeedMvRxViewModel(
         postDataSource.new(body)
             .doOnSuccess { onPostCreatedSubject.onNext(Unit) }
             .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(mainThread())
             .execute {
                 val responseObject = it.invoke()?.responseObject
                 if (responseObject != null) {
