@@ -1,22 +1,23 @@
-package com.abaz.twitterish.screen
+package com.abaz.twitterish.screen.homefeed
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.abaz.printlnDebug
 import com.abaz.twitterish.PaginationListener
 import com.abaz.twitterish.R
+import com.abaz.twitterish.screen.BaseTechTalkFragment
+import com.abaz.twitterish.screen.HomeFeedItem
+import com.abaz.twitterish.screen.HomeFeedMvRxActivity
 import com.abaz.twitterish.screen.new_post.NewPostMvRxFragment
 import com.abaz.twitterish.screen.postdetails.PostDetailsMvRxFragment
 import com.abaz.twitterish.utils.extensions.showOrGone
 import com.airbnb.mvrx.*
 import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.fragment_home_feed.*
 

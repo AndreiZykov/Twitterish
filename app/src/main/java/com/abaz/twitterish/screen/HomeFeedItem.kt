@@ -6,6 +6,7 @@ import com.abaz.twitterish.ColorInt
 import com.abaz.twitterish.R
 import com.abaz.twitterish.db.model.LikeDislikeStatus
 import com.abaz.twitterish.db.model.Post
+import com.abaz.twitterish.screen.homefeed.HomeFeedMvRxViewModel
 import com.abaz.twitterish.screen.postdetails.PostDetailsRxViewModel
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder

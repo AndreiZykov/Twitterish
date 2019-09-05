@@ -1,4 +1,4 @@
-package com.abaz.twitterish.screen
+package com.abaz.twitterish.screen.homefeed
 
 import com.abaz.printlnDebug
 import com.abaz.twitterish.data.PostDataSource
@@ -156,7 +156,11 @@ class HomeFeedMvRxViewModel(
         ): HomeFeedMvRxViewModel {
             val postDataSource: PostDataSource by viewModelContext.activity.inject()
             val userDataSource: UserDataSource by viewModelContext.activity.inject()
-            return HomeFeedMvRxViewModel(state, postDataSource, userDataSource)
+            return HomeFeedMvRxViewModel(
+                state,
+                postDataSource,
+                userDataSource
+            )
         }
 
         override fun initialState(viewModelContext: ViewModelContext): HomeFeedState? {

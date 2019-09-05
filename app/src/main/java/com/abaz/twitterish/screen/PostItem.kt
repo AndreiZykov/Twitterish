@@ -6,13 +6,12 @@ import com.abaz.twitterish.ColorInt
 import com.abaz.twitterish.R
 import com.abaz.twitterish.db.model.LikeDislikeStatus
 import com.abaz.twitterish.db.model.Post
+import com.abaz.twitterish.screen.homefeed.HomeFeedMvRxViewModel
 import com.abaz.twitterish.screen.postdetails.PostDetailsRxViewModel
 import com.abaz.twitterish.utils.extensions.colorById
 import com.abaz.twitterish.utils.extensions.hide
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
-import kotlinx.android.synthetic.main.layout_post_2.view.*
-import kotlinx.android.synthetic.main.layout_reply.view.*
 import kotlinx.android.synthetic.main.layout_reply.view.post_body
 import kotlinx.android.synthetic.main.layout_reply.view.post_date_time
 import kotlinx.android.synthetic.main.layout_reply.view.rating_text

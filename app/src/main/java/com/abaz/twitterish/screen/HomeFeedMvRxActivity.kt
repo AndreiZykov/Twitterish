@@ -3,10 +3,9 @@ package com.abaz.twitterish.screen
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.abaz.twitterish.R
-import com.abaz.twitterish.data.UserDataSource
+import com.abaz.twitterish.screen.homefeed.HomeFeedMvRxFragment
 import com.abaz.twitterish.screen.login.LoginFragment
 import com.airbnb.mvrx.BaseMvRxActivity
-import org.koin.android.ext.android.inject
 
 /**
  * @author: Anthony Busto

@@ -9,8 +9,7 @@ import com.abaz.printlnDebug
 import com.abaz.twitterish.R
 import com.abaz.twitterish.screen.BaseTechTalkFragment
 import com.abaz.twitterish.screen.HomeFeedMvRxActivity
-import com.abaz.twitterish.screen.HomeFeedMvRxViewModel
-import com.abaz.twitterish.screen.HomeFeedState
+import com.abaz.twitterish.screen.homefeed.HomeFeedMvRxViewModel
 import com.abaz.twitterish.utils.extensions.addTo
 import com.abaz.twitterish.utils.extensions.clear
 import com.abaz.twitterish.utils.extensions.showOrGone
