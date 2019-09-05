@@ -20,7 +20,8 @@ data class HomeFeedState(
     val feed: List<Post> = emptyList(),
     val selectedPostId: Long? = null,
     val likeRequest: Async<ResponseObject<Post>> = Uninitialized,
-    val isLoggedIn: Boolean = true
+    val isLoggedIn: Boolean = true,
+    val isLastPage: Boolean = false
 ) : MvRxState
 
 /**
@@ -54,7 +55,13 @@ class HomeFeedMvRxViewModel(
         postDataSource.feed(++page)
             .subscribeOn(Schedulers.io())
             .observeOn(mainThread())
-            .execute { copy(feedRequest = it, feed = postDataSource.cachedFeed()) }
+            .execute {
+                copy(
+                    feedRequest = it,
+                    isLastPage = if (it is Success && postDataSource.cachedFeed().size == feed.size) true else isLastPage,
+                    feed = postDataSource.cachedFeed()
+                )
+            }
     }
 
     fun updateFeed() = withState { state ->

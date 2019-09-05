@@ -130,16 +130,15 @@ class HomeFeedMvRxFragment : BaseTechTalkFragment() {
         addOnScrollListener(object : PaginationListener(HomeFeedMvRxViewModel.ITEMS_PER_PAGE) {
 
             override val isLoading: Boolean
-                get() = withState(viewModel) { state -> state }.feedRequest is Loading
+                get() = withState(viewModel) { state -> state.feedRequest is Loading }
 
-            //TODO: We need a way to determine if this is the last page.
-            //Maybe API should return totalPage, currentPage on response?
             override val isLastPage: Boolean
-                get() = false
+                get() = withState(viewModel) { state -> state.isLastPage }
 
             override fun loadMoreItems() {
                 viewModel.fetchFeed()
             }
+
         })
     }
 }
