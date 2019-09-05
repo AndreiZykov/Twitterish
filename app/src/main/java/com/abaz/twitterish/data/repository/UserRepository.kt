@@ -32,6 +32,8 @@ class UserRepository(
         }
     }
 
+
+
     override fun onLogInStateChanged(): Observable<IsLoggedIn> {
         return isLoggedInSubscription
     }
@@ -48,11 +50,14 @@ class UserRepository(
             .doOnNext { isLoggedInSubscription.onNext(IsLoggedIn(true)) }
     }
 
+    override fun userName(): Username? = sharedPreferenceRepository.getUserName()
+
     override fun userId(): Long = sharedPreferenceRepository.getUserId()
 
     private fun saveUser(user: User) {
         sharedPreferenceRepository.saveUserToken(user.jwt)
         sharedPreferenceRepository.saveUserId(user.id)
+        sharedPreferenceRepository.saveUserName(Username(user.username))
     }
 
 }

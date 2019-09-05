@@ -19,4 +19,5 @@
     <string name="sign_out_button_title">sign out</string>
     <string name="post_details_fragment_title">Post Details</string>
     <string name="new_post_fragment_title">New Post</string>
+    <string name="new_post_text_field_hint">What\'s Up?</string>
 </resources>

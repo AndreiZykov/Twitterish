@@ -1,6 +1,5 @@
 package com.abaz.twitterish.screen.homefeed
 
-import com.abaz.printlnDebug
 import com.abaz.twitterish.data.PostDataSource
 import com.abaz.twitterish.data.UserDataSource
 import com.abaz.twitterish.db.model.Post
@@ -8,11 +7,9 @@ import com.abaz.twitterish.mvrx.MvRxViewModel
 import com.abaz.twitterish.network.response.ResponseObject
 import com.abaz.twitterish.utils.extensions.add
 import com.airbnb.mvrx.*
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
 import org.koin.android.ext.android.inject
 
 /**
@@ -25,7 +22,6 @@ data class HomeFeedState(
     val feed: List<Post> = emptyList(),
     val selectedPostId: Long? = null,
     val likeRequest: Async<ResponseObject<Post>> = Uninitialized,
-    val newPostRequest: Async<Post> = Uninitialized,
     val isLoggedIn: Boolean = true
 ) : MvRxState
 
@@ -38,13 +34,6 @@ class HomeFeedMvRxViewModel(
     private val postDataSource: PostDataSource,
     private val userDataSource: UserDataSource
 ) : MvRxViewModel<HomeFeedState>(initialState, debugMode = true) {
-
-
-    private val disposables = CompositeDisposable()
-
-    private val onPostCreatedSubject: PublishSubject<Unit> = PublishSubject.create()
-
-    val onPostCreated: Observable<Unit> = onPostCreatedSubject
 
     var page = 0
 
@@ -83,35 +72,19 @@ class HomeFeedMvRxViewModel(
             }
     }
 
-
-    fun new(body: String) = withState { state ->
-        printlnDebug("calling new, body=$body")
-        postDataSource.new(body)
-            .doOnSuccess { onPostCreatedSubject.onNext(Unit) }
-            .subscribeOn(Schedulers.io())
-            .observeOn(mainThread())
-            .execute {
-                val responseObject = it.invoke()
-                if (responseObject != null) {
-                    copy(newPostRequest = it, feed = postDataSource.cachedFeed())
-                } else {
-                    copy(newPostRequest = it)
-                }
-            }
-    }
-
+    // not supported yet :)
     fun repost(id: Long) {
-        postDataSource.repost(id)
-            .doOnSuccess { updateFeed() }
-            .subscribeOn(Schedulers.io())
-            .execute {
-                val responseObject = it.invoke()
-                if (responseObject != null) {
-                    copy(newPostRequest = it, feed = feed.add(responseObject))
-                } else {
-                    copy(newPostRequest = it)
-                }
-            }
+//        postDataSource.repost(id)
+//            .doOnSuccess { updateFeed() }
+//            .subscribeOn(Schedulers.io())
+//            .execute {
+//                val responseObject = it.invoke()
+//                if (responseObject != null) {
+//                    copy(newPostRequest = it, feed = feed.add(responseObject))
+//                } else {
+//                    copy(newPostRequest = it)
+//                }
+//            }
     }
 
     fun like(postId: Long) = withState { _ ->
@@ -132,11 +105,6 @@ class HomeFeedMvRxViewModel(
             .execute {
                 copy(likeRequest = it, feed = postDataSource.cachedFeed())
             }
-    }
-
-
-    fun dispose() {
-        disposables.dispose()
     }
 
     fun signOut() {

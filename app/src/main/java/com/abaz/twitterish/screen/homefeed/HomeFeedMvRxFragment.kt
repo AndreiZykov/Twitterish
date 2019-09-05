@@ -16,7 +16,9 @@ import com.abaz.twitterish.screen.HomeFeedMvRxActivity
 import com.abaz.twitterish.screen.new_post.NewPostMvRxFragment
 import com.abaz.twitterish.screen.postdetails.PostDetailsMvRxFragment
 import com.abaz.twitterish.utils.extensions.showOrGone
-import com.airbnb.mvrx.*
+import com.airbnb.mvrx.Loading
+import com.airbnb.mvrx.activityViewModel
+import com.airbnb.mvrx.withState
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.fragment_home_feed.*
@@ -25,17 +27,21 @@ import kotlinx.android.synthetic.main.fragment_home_feed.*
  * @author: Anthony Busto
  * @date:   2019-08-28
  */
+
 class HomeFeedMvRxFragment : BaseTechTalkFragment() {
 
     private val viewModel: HomeFeedMvRxViewModel by activityViewModel()
-
 
     private val adapter: GroupAdapter<*>
         get() = (recycler_view?.adapter as? GroupAdapter<*>)
             ?: GroupAdapter<ViewHolder>()
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_home_feed, container, false)
     }
 
@@ -73,7 +79,7 @@ class HomeFeedMvRxFragment : BaseTechTalkFragment() {
 
         printlnDebug("invalidate called: state = $state")
 
-        if(!state.isLoggedIn){
+        if (!state.isLoggedIn) {
             // hack :)
             homeFeedActivity().supportFragmentManager.popBackStack()
         }
@@ -87,23 +93,11 @@ class HomeFeedMvRxFragment : BaseTechTalkFragment() {
         adapter.updateAsync(postsItems)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        viewModel.dispose()
-    }
-
     private fun goToDetails(id: Long) {
         (activity as? HomeFeedMvRxActivity)?.showFragment(
             PostDetailsMvRxFragment.newInstance(id), "PostDetailsMvRxFragment"
         )
     }
-
-
-//    private fun goToDetails(item: Item) {
-//        (activity as? HomeFeedMvRxActivity)?.showFragment(
-//            PostDetailsMvRxFragment.newInstance(id), "PostDetailsMvRxFragment"
-//        )
-//    }
 
     override fun onBackPressed(): Boolean {
         return true

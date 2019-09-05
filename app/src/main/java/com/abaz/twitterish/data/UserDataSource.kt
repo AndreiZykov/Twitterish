@@ -14,6 +14,7 @@ interface UserDataSource {
     fun isLoggedIn(): IsLoggedIn
     fun userId(): Long
     fun onLogInStateChanged(): Observable<IsLoggedIn>
+    fun userName(): Username?
 
     class IsLoggedIn(val value: Boolean = false)
 }

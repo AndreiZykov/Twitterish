@@ -1,6 +1,7 @@
 package com.abaz.twitterish.data.repository
 
 import android.content.Context
+import com.abaz.twitterish.utils.Username
 
 // temporary solution
 class SharedPreferenceRepository(private val ctx: Context) {
@@ -8,6 +9,8 @@ class SharedPreferenceRepository(private val ctx: Context) {
     private var barearToker: String? = null
 
     private var userId: Long? = null
+
+    private var username : Username? = null
 
     fun userToken(): String? {
         if (barearToker == null) {
@@ -35,6 +38,17 @@ class SharedPreferenceRepository(private val ctx: Context) {
         return userId ?: INVALID_USER_ID
     }
 
+    fun saveUserName(username: Username) {
+        saveStringToSharedPreferences(USER_ID_STRING_IDENTIFIER, username.value)
+        this.username = username
+    }
+
+    fun getUserName(): Username? {
+        if(username == null){
+            username = Username(getStringFromSharedPreference(USER_NAME_STRING_IDENTIFIER) ?: "")
+        }
+        return username
+    }
 
     private fun saveStringToSharedPreferences(key: String, value: String?) {
         ctx.getSharedPreferences(TWITTER_ISH_SHARED_PREFERENCE_NAME, 0)
@@ -50,6 +64,7 @@ class SharedPreferenceRepository(private val ctx: Context) {
         private const val TWITTER_ISH_SHARED_PREFERENCE_NAME = "TWITTER_ISH_SHARED_PREFERENCE_NAME"
         private const val BEARER_TOKEN_STRING_IDENTIFIER = "BEARER_TOKEN_STRING_IDENTIFIER"
         private const val USER_ID_STRING_IDENTIFIER = "USER_ID_STRING_IDENTIFIER"
+        private const val USER_NAME_STRING_IDENTIFIER = "USER_NAME_STRING_IDENTIFIER"
         private const val INVALID_USER_ID = -1L
     }
 

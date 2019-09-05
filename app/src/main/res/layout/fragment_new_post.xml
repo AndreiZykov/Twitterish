@@ -26,28 +26,33 @@
                     android:gravity="end|center_vertical"
                     android:padding="3dp"
                     android:layout_marginEnd="8dp"
-                    android:src="@drawable/ic_send_active" />
+                    android:src="@drawable/ic_send_white" />
 
     </androidx.appcompat.widget.Toolbar>
 
-    <ImageView
-            android:id="@+id/user_icon"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_margin="15dp"
-            android:src="@drawable/ic_female"
+    <com.github.ivbaranov.mli.MaterialLetterIcon
+            android:id="@+id/user_circle_icon"
+            android:layout_width="@dimen/reply_user_icon_size"
+            android:layout_height="@dimen/reply_user_icon_size"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            app:mli_letter="A"
+            app:mli_letter_size="14"
+            app:mli_shape_type="circle"
+            android:alpha="0.78"
+            android:layout_margin="12dp"
+            />
 
     <EditText
             android:id="@+id/post_body_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:hint="What's Up?"
+            android:layout_marginTop="6dp"
+            android:hint="@string/new_post_text_field_hint"
             android:text=""
-            app:layout_constraintStart_toEndOf="@+id/user_icon"
-            app:layout_constraintTop_toTopOf="@+id/user_icon" />
+            app:layout_constraintStart_toEndOf="@+id/user_circle_icon"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
 
     <ProgressBar
