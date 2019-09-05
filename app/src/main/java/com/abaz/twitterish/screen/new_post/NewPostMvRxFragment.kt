@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import com.abaz.twitterish.R
 import com.abaz.twitterish.screen.BaseTechTalkFragment
 import com.abaz.twitterish.screen.HomeFeedMvRxActivity
@@ -42,8 +43,9 @@ class NewPostMvRxFragment : BaseTechTalkFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        post_body_view.onTextChange(viewModel::onNewPostBodyChanged)
         send_icon.setOnClickListener { viewModel.new() }
+        post_body_view.onTextChange(viewModel::onNewPostBodyChanged)
+        post_body_view.requestFocus()
     }
 
     override fun invalidate() = withState(viewModel) { state ->

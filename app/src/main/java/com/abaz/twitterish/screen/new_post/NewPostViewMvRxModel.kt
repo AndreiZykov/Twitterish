@@ -31,7 +31,9 @@ class NewPostViewMvRxModel(initialState: NewPostState, private val postDataSourc
         postDataSource.new(state.newPostBody)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .execute { copy(newPostRequest = it, newPostBody = "") }
+            .execute {
+                copy(newPostRequest = it, newPostBody = "")
+            }
     }
 
 

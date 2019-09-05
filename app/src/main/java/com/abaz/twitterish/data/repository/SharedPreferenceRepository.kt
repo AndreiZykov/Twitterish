@@ -39,7 +39,7 @@ class SharedPreferenceRepository(private val ctx: Context) {
     }
 
     fun saveUserName(username: Username) {
-        saveStringToSharedPreferences(USER_ID_STRING_IDENTIFIER, username.value)
+        saveStringToSharedPreferences(USER_NAME_STRING_IDENTIFIER, username.value)
         this.username = username
     }
 
