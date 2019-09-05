@@ -30,28 +30,30 @@ class PostRepository(private val userDataSource: UserDataSource, private val api
 
     override fun cachedFeed(): List<Post> = feedCache
 
-    override fun new(body: String): Single<Post> =
+    override fun new(body: String): Observable<Post> =
         api.new(userDataSource.userId(), body)
+            .doOnNext { response -> response.responseObject?.let { updateFeed(listOf(it)) } }
             .map { it.responseObject }
-            .doOnSuccess { updateFeed(listOf(it)) }
 
     override fun repost(id: Long): Single<Post> {
         return api.repost(id).map { it.responseObject }
     }
 
     override fun like(id: Long): Single<ResponseObject<Post>> {
-        return api.like(id).doOnSuccess { updateFeed(listOf(it.responseObject)) }
+        return api.like(id)
+            .doOnSuccess { response -> response.responseObject?.let { updateFeed(listOf(it)) }  }
     }
 
     override fun likeReply(id: Long): Single<Post> = api.like(id).map { it.responseObject }
 
     override fun dislike(id: Long): Single<ResponseObject<Post>> {
-        return api.dislike(id).doOnSuccess { updateFeed(listOf(it.responseObject)) }
+        return api.dislike(id)
+            .doOnSuccess { response -> response.responseObject?.let { updateFeed(listOf(it)) }  }
     }
 
     override fun dislikeReply(id: Long): Single<Post> = api.dislike(id).map { it.responseObject }
 
-    override fun reply(postId: Long, body: String): Single<Post> {
+    override fun reply(postId: Long, body: String): Observable<Post> {
         return api.reply(postId, PostBodyParams(body, userDataSource.userId()))
             .map { it.responseObject }
     }

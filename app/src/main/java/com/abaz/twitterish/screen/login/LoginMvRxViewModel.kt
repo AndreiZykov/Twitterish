@@ -1,16 +1,19 @@
 package com.abaz.twitterish.screen.login
 
 import com.abaz.twitterish.BuildConfig
+import com.abaz.twitterish.R
 import com.abaz.twitterish.data.UserDataSource
 import com.abaz.twitterish.db.model.User
 import com.abaz.twitterish.mvrx.MvRxViewModel
 import com.abaz.twitterish.network.response.ResponseObject
+import com.abaz.twitterish.utils.DEBOUNCE_VALUE
 import com.abaz.twitterish.utils.Password
 import com.abaz.twitterish.utils.Username
 import com.airbnb.mvrx.*
 import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
 import io.reactivex.schedulers.Schedulers.io
 import org.koin.android.ext.android.inject
+import java.util.concurrent.TimeUnit
 
 data class LoginState(
     val username: String = "",
@@ -21,14 +24,14 @@ data class LoginState(
     val loginError: LoginError? = null
 ) : MvRxState
 
-enum class LoginError {
-    USERNAME_IS_TAKEN,
-    USERNAME_NOTE_FOUND,
-    EMPTY_USER_NAME,
-    EMPTY_PASSWORD,
-    EMPTY_PASSWORD_CONFIRMATION,
-    PASSWORD_AND_CONFIRMATION_NOT_MATCH,
-    INVALID_PASSWORD
+enum class LoginError(val message: Int) {
+    USERNAME_IS_TAKEN(R.string.username_is_taken),
+    USER_NOT_FOUND(R.string.usern_not_found),
+    EMPTY_USER_NAME(R.string.user_name_is_empty),
+    EMPTY_PASSWORD(R.string.password_is_empty),
+    EMPTY_PASSWORD_CONFIRMATION(R.string.confirm_password_is_empty),
+    PASSWORD_AND_CONFIRMATION_NOT_MATCH(R.string.password_do_not_match),
+    INVALID_PASSWORD(R.string.invalid_password)
 }
 
 class LoginMvRxViewModel(initialState: LoginState, private val userDataSource: UserDataSource) :
@@ -40,19 +43,21 @@ class LoginMvRxViewModel(initialState: LoginState, private val userDataSource: U
     }
 
     fun emailChanged(email: String) {
-        setState { copy(username = email) }
+        setState { copy(username = email, loginError = null) }
     }
 
     fun passwordChanged(password: String) {
-        setState { copy(password = password) }
+        setState { copy(password = password, loginError = null) }
     }
 
     fun passwordConfirmationChanged(passwordConfirmation: String) {
-        setState { copy(passwordConfirmation = passwordConfirmation) }
+        setState { copy(passwordConfirmation = passwordConfirmation, loginError = null) }
     }
 
     fun login() {
         withState { state ->
+
+            setState { copy(loginError = null) }
 
             val loginError = when {
                 state.username.isEmpty() -> LoginError.EMPTY_USER_NAME
@@ -62,15 +67,16 @@ class LoginMvRxViewModel(initialState: LoginState, private val userDataSource: U
 
             if (loginError == null) {
                 userDataSource.login(Username(state.username), Password(state.password))
+                    .debounce(DEBOUNCE_VALUE, TimeUnit.MILLISECONDS)
                     .subscribeOn(io())
                     .observeOn(mainThread())
-                    .execute {
+                    .execute { response ->
                         copy(
-                            loginResponse = it,
+                            loginResponse = response,
                             isLoggedIn = userDataSource.isLoggedIn().value,
-                            username = if(userDataSource.isLoggedIn().value) "" else username,
-                            password = if(userDataSource.isLoggedIn().value) "" else password,
-                            loginError = parseError(it)
+                            username = if (userDataSource.isLoggedIn().value) "" else username,
+                            password = if (userDataSource.isLoggedIn().value) "" else password,
+                            loginError = parseError(response)
                         )
                     }
             } else {
@@ -83,6 +89,8 @@ class LoginMvRxViewModel(initialState: LoginState, private val userDataSource: U
     fun signUp() {
         withState { state ->
 
+            setState { copy(loginError = null) }
+
             val loginError = when {
                 state.username.isEmpty() -> LoginError.EMPTY_USER_NAME
                 state.password.isEmpty() -> LoginError.EMPTY_PASSWORD
@@ -93,15 +101,16 @@ class LoginMvRxViewModel(initialState: LoginState, private val userDataSource: U
 
             if (loginError == null) {
                 userDataSource.signUp(Username(state.username), Password(state.password))
+                    .debounce(DEBOUNCE_VALUE, TimeUnit.MILLISECONDS)
                     .subscribeOn(io())
                     .observeOn(mainThread())
                     .execute {
                         copy(
                             loginResponse = it,
                             isLoggedIn = userDataSource.isLoggedIn().value,
-                            username = if(userDataSource.isLoggedIn().value) "" else username,
-                            password = if(userDataSource.isLoggedIn().value) "" else password,
-                            passwordConfirmation = if(userDataSource.isLoggedIn().value) "" else passwordConfirmation,
+                            username = if (userDataSource.isLoggedIn().value) "" else username,
+                            password = if (userDataSource.isLoggedIn().value) "" else password,
+                            passwordConfirmation = if (userDataSource.isLoggedIn().value) "" else passwordConfirmation,
                             loginError = parseError(it)
                         )
                     }
@@ -116,7 +125,7 @@ class LoginMvRxViewModel(initialState: LoginState, private val userDataSource: U
         return if (response is Success) {
             when (response.invoke().errorCode) {
                 800 -> LoginError.USERNAME_IS_TAKEN
-                801 -> LoginError.USERNAME_NOTE_FOUND
+                801 -> LoginError.USER_NOT_FOUND
                 802 -> LoginError.INVALID_PASSWORD
                 else -> null
             }

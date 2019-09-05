@@ -20,4 +20,11 @@
     <string name="post_details_fragment_title">Post Details</string>
     <string name="new_post_fragment_title">New Post</string>
     <string name="new_post_text_field_hint">What\'s Up?</string>
+    <string name="username_is_taken">Username is taken</string>
+    <string name="usern_not_found">User not found</string>
+    <string name="user_name_is_empty">Username is empty</string>
+    <string name="password_is_empty">Password is empty</string>
+    <string name="confirm_password_is_empty">Confirm password is empty</string>
+    <string name="password_do_not_match">Password dont match</string>
+    <string name="invalid_password">Invalid password</string>
 </resources>

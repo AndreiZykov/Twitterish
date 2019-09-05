@@ -6,6 +6,7 @@
     <color name="title_text_color">#000000</color>
     <color name="action_text_color">#2196F3</color>
     <color name="white">#ffffff</color>
+    <color name="dark_ripple">#749E9E9E</color>
 
     <array name="material_colors">
         <item name="red_700" type="color">#d01716</item>

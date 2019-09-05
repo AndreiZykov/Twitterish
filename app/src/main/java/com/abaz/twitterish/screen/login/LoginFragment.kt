@@ -54,6 +54,11 @@ class LoginFragment : BaseTechTalkFragment() {
             goToFeedFragment()
         }
 
+        if(state.loginError != null){
+            Toast.makeText(context, state.loginError.message,
+                Toast.LENGTH_SHORT).show()
+        }
+
         return@withState
     }
 

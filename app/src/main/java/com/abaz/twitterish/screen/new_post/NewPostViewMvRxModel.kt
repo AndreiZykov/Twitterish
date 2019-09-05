@@ -5,10 +5,12 @@ import com.abaz.twitterish.data.PostDataSource
 import com.abaz.twitterish.data.UserDataSource
 import com.abaz.twitterish.db.model.Post
 import com.abaz.twitterish.mvrx.MvRxViewModel
+import com.abaz.twitterish.utils.DEBOUNCE_VALUE
 import com.airbnb.mvrx.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.koin.android.ext.android.inject
+import java.util.concurrent.TimeUnit
 
 
 data class NewPostState(
@@ -29,6 +31,7 @@ class NewPostViewMvRxModel(initialState: NewPostState, private val postDataSourc
     fun new() = withState { state ->
         if (state.newPostBody.isEmpty()) return@withState
         postDataSource.new(state.newPostBody)
+            .debounce(DEBOUNCE_VALUE, TimeUnit.MILLISECONDS)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .execute {

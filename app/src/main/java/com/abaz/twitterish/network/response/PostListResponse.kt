@@ -12,7 +12,7 @@ data class PostListResponse(
 
 data class ResponseObject<T>(
     @SerializedName("response_object")
-    val responseObject: T,
+    val responseObject: T?,
     @SerializedName("errorCode")
     val errorCode: Int
 )

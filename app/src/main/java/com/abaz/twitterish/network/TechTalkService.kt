@@ -33,7 +33,7 @@ interface TechTalkService {
 
     @POST("post/{id}/reply")
     fun reply(@Path("id") id: Long,
-              @Body reply: PostBodyParams): Single<ResponseObject<Post>>
+              @Body reply: PostBodyParams): Observable<ResponseObject<Post>>
 
     @POST("signIn")
     fun login(@Body user: LoginRequest): Observable<ResponseObject<User>>
@@ -42,7 +42,7 @@ interface TechTalkService {
     fun signUp(@Body user: LoginRequest): Observable<ResponseObject<User>>
 
     @POST("post")
-    fun new(@Body post: PostBodyParams): Single<ResponseObject<Post>>
+    fun new(@Body post: PostBodyParams): Observable<ResponseObject<Post>>
 
     @POST("post/{id}/repost")
     fun repost(@Path("id") id: Long): Single<ResponseObject<Post>>
@@ -64,11 +64,11 @@ class TechTalkApi(provider: RetrofitProvider) {
 
     fun dislike(id: Long): Single<ResponseObject<Post>> = service.dislike(id)
 
-    fun reply(id: Long, @Body reply: PostBodyParams): Single<ResponseObject<Post>> = service.reply(id, reply)
+    fun reply(id: Long, @Body reply: PostBodyParams): Observable<ResponseObject<Post>> = service.reply(id, reply)
 
-    fun new(post: PostBodyParams): Single<ResponseObject<Post>> = service.new(post)
+    fun new(post: PostBodyParams): Observable<ResponseObject<Post>> = service.new(post)
 
-    fun new(userId: Long, body: String): Single<ResponseObject<Post>> = service.new(
+    fun new(userId: Long, body: String): Observable<ResponseObject<Post>> = service.new(
         PostBodyParams(
             userId = userId,
             body = body

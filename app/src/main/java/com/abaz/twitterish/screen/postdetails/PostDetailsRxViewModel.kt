@@ -3,6 +3,7 @@ package com.abaz.twitterish.screen.postdetails
 import com.abaz.twitterish.data.PostDataSource
 import com.abaz.twitterish.db.model.Post
 import com.abaz.twitterish.mvrx.MvRxViewModel
+import com.abaz.twitterish.utils.DEBOUNCE_VALUE
 import com.abaz.twitterish.utils.extensions.add
 import com.abaz.twitterish.utils.extensions.dislikeAndCopy
 import com.abaz.twitterish.utils.extensions.likeAndCopy
@@ -10,6 +11,7 @@ import com.airbnb.mvrx.*
 import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
 import io.reactivex.schedulers.Schedulers.io
 import org.koin.android.ext.android.inject
+import java.util.concurrent.TimeUnit
 
 data class PostDetailsState(
     val selectedPostId: Long? = null,
@@ -48,6 +50,7 @@ class PostDetailsRxViewModel(
         if (state.selectedPostId == null) return@withState
         if (state.selectedPostRepliesRequest is Loading) return@withState
         postDataSource.reply(state.selectedPostId, state.replyBody)
+            .debounce(DEBOUNCE_VALUE, TimeUnit.MILLISECONDS)
             .subscribeOn(io())
             .observeOn(mainThread())
             .execute {

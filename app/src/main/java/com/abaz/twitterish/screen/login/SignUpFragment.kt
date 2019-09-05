@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.abaz.twitterish.R
 import com.abaz.twitterish.screen.BaseTechTalkFragment
 import com.abaz.twitterish.screen.HomeFeedMvRxActivity
@@ -56,6 +57,11 @@ class SignUpFragment : BaseTechTalkFragment() {
 
         if(state.isLoggedIn){
             goToFeedFragment()
+        }
+
+        if(state.loginError != null){
+            Toast.makeText(context, state.loginError.message,
+                Toast.LENGTH_SHORT).show()
         }
 
         return@withState
