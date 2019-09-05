@@ -68,6 +68,8 @@ class LoginMvRxViewModel(initialState: LoginState, private val userDataSource: U
                         copy(
                             loginResponse = it,
                             isLoggedIn = userDataSource.isLoggedIn().value,
+                            username = if(userDataSource.isLoggedIn().value) "" else username,
+                            password = if(userDataSource.isLoggedIn().value) "" else password,
                             loginError = parseError(it)
                         )
                     }
@@ -97,6 +99,9 @@ class LoginMvRxViewModel(initialState: LoginState, private val userDataSource: U
                         copy(
                             loginResponse = it,
                             isLoggedIn = userDataSource.isLoggedIn().value,
+                            username = if(userDataSource.isLoggedIn().value) "" else username,
+                            password = if(userDataSource.isLoggedIn().value) "" else password,
+                            passwordConfirmation = if(userDataSource.isLoggedIn().value) "" else passwordConfirmation,
                             loginError = parseError(it)
                         )
                     }
