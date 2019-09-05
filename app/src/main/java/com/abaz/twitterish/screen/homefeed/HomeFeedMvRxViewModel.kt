@@ -72,7 +72,7 @@ class HomeFeedMvRxViewModel(
 
     fun updateFeed() = withState { state ->
         if (state.feedRequest is Loading) return@withState
-        page = 0
+        page = 1
         postDataSource.feed(page)
             .subscribeOn(Schedulers.io())
             .execute {
