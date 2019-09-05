@@ -146,12 +146,14 @@
                 android:layout_height="wrap_content">
 
             <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="39dp"
+                    android:layout_height="39dp"
                     android:id="@+id/thumbs_up_icon"
                     android:layout_marginEnd="0dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_arrow_up"/>
+                    android:src="@drawable/ic_arrow_up"
+                    android:padding="2dp"
+                    android:background="@drawable/ripple_circle_dark"/>
 
             <TextView
                     android:layout_width="wrap_content"
@@ -164,12 +166,14 @@
 
 
             <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="39dp"
+                    android:layout_height="39dp"
                     android:layout_marginStart="0dp"
                     android:id="@+id/thumbs_down_icon"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_arrow_down"/>
+                    android:src="@drawable/ic_arrow_down"
+                    android:padding="2dp"
+                    android:background="@drawable/ripple_circle_dark"/>
 
         </LinearLayout>
 

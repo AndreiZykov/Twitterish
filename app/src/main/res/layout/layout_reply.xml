@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                   xmlns:tools="http://schemas.android.com/tools"
-                                                   android:layout_width="match_parent"
-                                                   android:layout_height="wrap_content"
-                                                   android:orientation="vertical"
-                                                   android:padding="10dp">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
 
 
     <com.github.ivbaranov.mli.MaterialLetterIcon
             android:id="@+id/user_circle_icon"
             android:layout_width="@dimen/reply_user_icon_size"
             android:layout_height="@dimen/reply_user_icon_size"
+            android:alpha="0.62"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:mli_letter="A"
-            app:mli_shape_type="circle"
-            android:alpha="0.62"
             app:mli_letter_size="17"
-            />
+            app:mli_shape_type="circle" />
 
 
     <TextView
@@ -32,7 +30,7 @@
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toStartOf="@+id/layout_ratings"
             app:layout_constraintStart_toEndOf="@+id/user_circle_icon"
-            app:layout_constraintTop_toTopOf="@+id/user_circle_icon"/>
+            app:layout_constraintTop_toTopOf="@+id/user_circle_icon" />
 
 
     <TextView
@@ -46,7 +44,7 @@
             app:layout_constraintBottom_toTopOf="@+id/extras_layout"
             app:layout_constraintEnd_toStartOf="@+id/layout_ratings"
             app:layout_constraintStart_toEndOf="@id/user_circle_icon"
-            app:layout_constraintTop_toBottomOf="@id/user_name"/>
+            app:layout_constraintTop_toBottomOf="@id/user_name" />
 
 
     <LinearLayout
@@ -86,7 +84,7 @@
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_chat_outline"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                     android:id="@+id/reply_count_text"
@@ -94,7 +92,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:drawablePadding="5dp"
-                    android:text="12"/>
+                    android:text="12" />
 
         </LinearLayout>
 
@@ -113,7 +111,7 @@
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_share"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                     android:id="@+id/share_text"
@@ -121,7 +119,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:drawablePadding="5dp"
-                    android:text="SHARE"/>
+                    android:text="SHARE" />
 
         </LinearLayout>
 
@@ -139,11 +137,13 @@
 
         <ImageView
                 android:id="@+id/thumbs_up_icon"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="39dp"
+                android:layout_height="39dp"
                 android:layout_gravity="center"
                 android:layout_marginEnd="0dp"
-                android:src="@drawable/ic_arrow_up"/>
+                android:background="@drawable/ripple_circle_dark"
+                android:padding="2dp"
+                android:src="@drawable/ic_arrow_up" />
 
         <TextView
                 android:id="@+id/rating_text"
@@ -152,16 +152,18 @@
                 android:layout_gravity="center_horizontal"
                 android:drawablePadding="5dp"
                 android:text="1"
-                android:textSize="20dp"/>
+                android:textSize="20dp" />
 
 
         <ImageView
                 android:id="@+id/thumbs_down_icon"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="39dp"
+                android:layout_height="39dp"
                 android:layout_gravity="center"
                 android:layout_marginStart="0dp"
-                android:src="@drawable/ic_arrow_down"/>
+                android:background="@drawable/ripple_circle_dark"
+                android:padding="2dp"
+                android:src="@drawable/ic_arrow_down" />
 
     </LinearLayout>
 

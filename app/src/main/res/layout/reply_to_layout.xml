@@ -45,7 +45,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/top_div"
-            android:background="@drawable/ripple_circle_black"
+            android:background="@drawable/ripple_circle_dark"
             android:layout_margin="2dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
