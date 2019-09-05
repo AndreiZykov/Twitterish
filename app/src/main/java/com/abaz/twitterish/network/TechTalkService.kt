@@ -46,6 +46,9 @@ interface TechTalkService {
 
     @POST("post/{id}/repost")
     fun repost(@Path("id") id: Long): Single<ResponseObject<Post>>
+
+    @GET("post/{id}")
+    fun fetchPost(@Path("id") postId: Long): Single<Post>
 }
 
 
@@ -79,5 +82,7 @@ class TechTalkApi(provider: RetrofitProvider) {
 
     fun signUp(username: Username, password: Password): Observable<ResponseObject<User>> =
         service.signUp(LoginRequest(username.value, password.value))
+
+    fun fetchPost(postId: Long): Single<Post> = service.fetchPost(postId)
 
 }

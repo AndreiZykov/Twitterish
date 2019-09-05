@@ -10,12 +10,10 @@ import com.abaz.printlnDebug
 import com.abaz.twitterish.BaseMultiTypeFragment
 import com.abaz.twitterish.R
 import com.abaz.twitterish.screen.HomeFeedItem
-import com.abaz.twitterish.screen.HomeFeedMvRxViewModel
 import com.abaz.twitterish.screen.PostItem
 import com.abaz.twitterish.utils.extensions.onTextChange
 import com.airbnb.mvrx.*
 import com.xwray.groupie.Group
-import kotlinx.android.synthetic.main.fragment_home_feed.*
 import kotlinx.android.synthetic.main.fragment_home_feed.recycler_view
 import kotlinx.android.synthetic.main.fragment_post_details.*
 import kotlinx.android.synthetic.main.fragment_post_details.toolbar
@@ -29,7 +27,7 @@ import kotlinx.android.synthetic.main.reply_to_layout.*
 class PostDetailsMvRxFragment : BaseMultiTypeFragment() {
 
 
-    private val viewModel: HomeFeedMvRxViewModel by activityViewModel()
+    private val viewModel: PostDetailsRxViewModel by fragmentViewModel()
 
     private val postId: Long by args()
 
@@ -43,11 +41,6 @@ class PostDetailsMvRxFragment : BaseMultiTypeFragment() {
         printlnDebug("onCreate")
         viewModel.selectPost(postId)
         setHasOptionsMenu(true)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.onResume()
     }
 
     override fun onCreateView(inflater: LayoutInflater, c: ViewGroup?, s: Bundle?): View? {
@@ -88,12 +81,10 @@ class PostDetailsMvRxFragment : BaseMultiTypeFragment() {
 
         printlnDebug("invalidate PostDetailsMvRxFragment")
 
-        val selectedPost = state.feed.firstOrNull {
-            it.id == state.selectedPostId
-        }
-
         val list: MutableList<Group> = mutableListOf<Group>().apply {
-            add(HomeFeedItem.create(selectedPost!!, viewModel))
+            if (state.selectedPost != null) {
+                add(HomeFeedItem.create(state.selectedPost, viewModel))
+            }
         }
 
         adapter.updateAsync(list)
@@ -104,7 +95,7 @@ class PostDetailsMvRxFragment : BaseMultiTypeFragment() {
 
         if (state.selectedPostRepliesRequest !is Loading) {
 
-            if (!state.selectedPostRepliesRequest()?.responseList.isNullOrEmpty()) {
+            if (!state.selectedPostReplies.isNullOrEmpty()) {
                 list.addAll(state.selectedPostReplies.map {
                     PostItem.create(it, viewModel)
                 })
@@ -142,11 +133,5 @@ class PostDetailsMvRxFragment : BaseMultiTypeFragment() {
             args.putLong(MvRx.KEY_ARG, postId)
             return args
         }
-
-//        private fun arg(post: Post): Bundle {
-//            val args = Bundle()
-//            args.putParcelable(MvRx.KEY_ARG, post)
-//            return args
-//        }
     }
 }

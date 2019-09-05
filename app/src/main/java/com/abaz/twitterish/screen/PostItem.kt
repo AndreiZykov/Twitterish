@@ -6,6 +6,7 @@ import com.abaz.twitterish.ColorInt
 import com.abaz.twitterish.R
 import com.abaz.twitterish.db.model.LikeDislikeStatus
 import com.abaz.twitterish.db.model.Post
+import com.abaz.twitterish.screen.postdetails.PostDetailsRxViewModel
 import com.abaz.twitterish.utils.extensions.colorById
 import com.abaz.twitterish.utils.extensions.hide
 import com.xwray.groupie.kotlinandroidextensions.Item
@@ -34,7 +35,6 @@ import java.util.*
 class PostItem(
     private val post: Post,
     private val onReply: (postId: Long) -> Unit,
-
     private val onRepost: (postId: Long) -> Unit,
     private val onLike: (postId: Long) -> Unit,
     private val onDislike: (postId: Long) -> Unit
@@ -108,5 +108,14 @@ class PostItem(
             onLike = { vm.like(it) },
             onDislike = { vm.dislike(it) }
         )
+
+        fun create(post: Post, vm: PostDetailsRxViewModel) = PostItem(
+            post = post,
+            onReply = { },
+            onRepost = { vm.repost(it) },
+            onLike = { vm.like(it) },
+            onDislike = { vm.dislike(it) }
+        )
+
     }
 }

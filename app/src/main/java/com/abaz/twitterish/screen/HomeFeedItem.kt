@@ -6,6 +6,7 @@ import com.abaz.twitterish.ColorInt
 import com.abaz.twitterish.R
 import com.abaz.twitterish.db.model.LikeDislikeStatus
 import com.abaz.twitterish.db.model.Post
+import com.abaz.twitterish.screen.postdetails.PostDetailsRxViewModel
 import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.layout_post_2.view.*
@@ -135,6 +136,13 @@ class HomeFeedItem(
 
     companion object {
         fun create(post: Post, vm: HomeFeedMvRxViewModel) = HomeFeedItem(
+            post = post,
+            onReply = {  },
+            onRepost = { vm.repost(it) },
+            onLike = { vm.like(it) },
+            onDislike = { vm.dislike(it) }
+        )
+        fun create(post: Post, vm: PostDetailsRxViewModel) = HomeFeedItem(
             post = post,
             onReply = {  },
             onRepost = { vm.repost(it) },

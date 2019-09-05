@@ -34,17 +34,14 @@ class HomeFeedMvRxFragment : BaseTechTalkFragment() {
             ?: GroupAdapter<ViewHolder>()
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-//        viewModel.asyncSubscribe(HomeFeedState::likeRequest, onSuccess = {
-//            printlnDebug("  viewModel.asyncSubscribe--likeRequest onSuccess")
-//        })
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_home_feed, container, false)
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.onResume()
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
