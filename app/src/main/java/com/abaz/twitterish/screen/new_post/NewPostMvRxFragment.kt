@@ -31,15 +31,6 @@ class NewPostMvRxFragment : BaseTechTalkFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        viewModel.asyncSubscribe(HomeFeedState::newPostRequest, onSuccess = {
-//            printlnDebug("viewModel.asyncSubscribe--newPostRequest onSuccess")
-//            post_body_view.apply {
-//                isEnabled = true
-//                clear()
-//            }
-//            (activity as? HomeFeedMvRxActivity)?.close()
-//        })
-
 
         withState(viewModel) {
             printlnDebug("newPostRequest initial state")
@@ -55,7 +46,6 @@ class NewPostMvRxFragment : BaseTechTalkFragment() {
                 printlnDebug("it.shouldLoad::${it.newPostRequest.shouldLoad}")
             }
         }
-
 
     }
 

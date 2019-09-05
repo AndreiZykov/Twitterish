@@ -79,9 +79,10 @@ class PostDetailsMvRxFragment : BaseMultiTypeFragment() {
 
     override fun invalidate() = withState(viewModel) { state ->
 
-        send_icon.isEnabled = state.selectedPostRepliesRequest !is Loading
-        post_details_swipe_layout.isRefreshing = state.selectedPostRepliesRequest is Loading
+        send_icon.setImageResource(if (state.replyBody.isEmpty()) R.drawable.ic_send else R.drawable.ic_send_active)
 
+        if(state.selectedPostRepliesRequest !is Loading)  post_details_swipe_layout.isRefreshing = false
+        
         val list: MutableList<Group> = mutableListOf()
         if (state.selectedPost != null) list.add(HomeFeedItem.create(state.selectedPost, viewModel))
         list.addAll(state.selectedPostReplies.map { post -> PostItem.create(post, viewModel) })

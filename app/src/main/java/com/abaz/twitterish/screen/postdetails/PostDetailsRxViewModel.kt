@@ -44,26 +44,28 @@ class PostDetailsRxViewModel(
     }
 
     fun reply() = withState { state ->
-        if (state.selectedPostId != null) {
-            postDataSource.reply(state.selectedPostId, state.replyBody)
-                .subscribeOn(io())
-                .observeOn(mainThread())
-                .execute {
-                    refreshMainPost()
-                    fetchReplies()
-                    val selectedPost = postDataSource.postById(selectedPostId)
-                    val newPost = it.invoke()
-                    val replies = newPost
-                        ?.let { selectedPostReplies.add(newPost, 0) }
-                        ?: selectedPostReplies
-                    copy(
-                        selectedPost = selectedPost,
-                        replyRequest = it,
-                        selectedPostReplies = replies,
-                        replyBody = ""
-                    )
-                }
-        }
+        if (state.replyBody.isEmpty()) return@withState
+        if (state.selectedPostId == null) return@withState
+        if (state.selectedPostRepliesRequest is Loading) return@withState
+        postDataSource.reply(state.selectedPostId, state.replyBody)
+            .subscribeOn(io())
+            .observeOn(mainThread())
+            .execute {
+                refreshMainPost()
+                fetchReplies()
+                val selectedPost = postDataSource.postById(selectedPostId)
+                val newPost = it.invoke()
+                val replies = newPost
+                    ?.let { selectedPostReplies.add(newPost, 0) }
+                    ?: selectedPostReplies
+                copy(
+                    selectedPost = selectedPost,
+                    replyRequest = it,
+                    selectedPostReplies = replies,
+                    replyBody = ""
+                )
+            }
+
     }
 
     fun resetSelectedPost() = withState { state ->
