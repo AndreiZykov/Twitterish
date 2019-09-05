@@ -50,6 +50,7 @@ class PostDetailsRxViewModel(
                 .observeOn(mainThread())
                 .execute {
                     refreshMainPost()
+                    fetchReplies()
                     val selectedPost = postDataSource.postById(selectedPostId)
                     val newPost = it.invoke()
                     val replies = newPost
