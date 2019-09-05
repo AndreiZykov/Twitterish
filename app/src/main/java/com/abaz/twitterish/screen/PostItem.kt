@@ -93,6 +93,7 @@ class PostItem(
 
     }
 
+
     override fun getChangePayload(newItem: com.xwray.groupie.Item<*>?): Any? = post
 
     override fun getId(): Long = post.id
