@@ -13,13 +13,17 @@ import com.abaz.twitterish.R
 import com.abaz.twitterish.screen.BaseTechTalkFragment
 import com.abaz.twitterish.screen.HomeFeedItem
 import com.abaz.twitterish.screen.HomeFeedMvRxActivity
+import com.abaz.twitterish.screen.ProgressItem
 import com.abaz.twitterish.screen.new_post.NewPostMvRxFragment
 import com.abaz.twitterish.screen.postdetails.PostDetailsMvRxFragment
+import com.abaz.twitterish.utils.extensions.add
+import com.abaz.twitterish.utils.extensions.gone
 import com.abaz.twitterish.utils.extensions.showOrGone
 import com.airbnb.mvrx.Loading
 import com.airbnb.mvrx.activityViewModel
 import com.airbnb.mvrx.withState
 import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.kotlinandroidextensions.Item
 import com.xwray.groupie.kotlinandroidextensions.ViewHolder
 import kotlinx.android.synthetic.main.fragment_home_feed.*
 
@@ -86,9 +90,15 @@ class HomeFeedMvRxFragment : BaseTechTalkFragment() {
 
         swipe_layout.isRefreshing = state.feedRequest is Loading && state.feed.isEmpty()
 
-        load_more_progress_bar.showOrGone(state.feedRequest is Loading && state.feed.isNotEmpty())
+        load_more_progress_bar.gone()
 
-        val postsItems = state.feed.map { post -> HomeFeedItem.create(post, viewModel) }
+        val postsItems = mutableListOf<Item>()
+
+        postsItems.addAll(state.feed.map { post -> HomeFeedItem.create(post, viewModel) })
+
+        if (state.feedRequest is Loading && state.feed.isNotEmpty()) {
+            postsItems.add(ProgressItem())
+        }
 
         adapter.updateAsync(postsItems)
     }

@@ -5,12 +5,11 @@ import com.abaz.twitterish.data.UserDataSource
 import com.abaz.twitterish.db.model.Post
 import com.abaz.twitterish.mvrx.MvRxViewModel
 import com.abaz.twitterish.network.response.ResponseObject
-import com.abaz.twitterish.utils.extensions.add
 import com.airbnb.mvrx.*
 import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import org.koin.android.ext.android.inject
+import java.util.concurrent.TimeUnit
 
 /**
  * @author: Anthony Busto
@@ -64,12 +63,7 @@ class HomeFeedMvRxViewModel(
         page = 1
         postDataSource.feed(page)
             .subscribeOn(Schedulers.io())
-            .execute {
-                copy(
-                    feedRequest = it,
-                    feed = it() ?: feed
-                )
-            }
+            .execute { copy(feedRequest = it, feed = it() ?: feed) }
     }
 
     // not supported yet :)
