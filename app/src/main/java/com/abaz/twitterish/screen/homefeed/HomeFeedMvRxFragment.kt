@@ -74,23 +74,17 @@ class HomeFeedMvRxFragment : BaseTechTalkFragment() {
         printlnDebug("invalidate called: state = $state")
 
         if(!state.isLoggedIn){
-            homeFeedActivity()
-                .supportFragmentManager
-                .popBackStack()
+            // hack :)
+            homeFeedActivity().supportFragmentManager.popBackStack()
         }
 
         swipe_layout.isRefreshing = state.feedRequest is Loading && state.feed.isEmpty()
 
         load_more_progress_bar.showOrGone(state.feedRequest is Loading && state.feed.isNotEmpty())
 
-        adapter.updateAsync(state.feed.map { post ->
-            HomeFeedItem(post = post,
-                onReply = { },
-                onRepost = { viewModel.repost(it) },
-                onLike = { viewModel.like(it) },
-                onDislike = { viewModel.dislike(it) }
-            )
-        })
+        val postsItems = state.feed.map { post -> HomeFeedItem.create(post, viewModel) }
+
+        adapter.updateAsync(postsItems)
     }
 
     override fun onDestroyView() {

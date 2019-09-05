@@ -133,14 +133,14 @@ class HomeFeedItem(
     override fun getLayout() = R.layout.layout_post_2
 
     companion object {
-        fun create(post: Post, vm: HomeFeedMvRxViewModel) = HomeFeedItem(
+        fun create(post: Post, vm: HomeFeedMvRxViewModel) = HomeFeedItem (
             post = post,
             onReply = {  },
             onRepost = { vm.repost(it) },
             onLike = { vm.like(it) },
             onDislike = { vm.dislike(it) }
         )
-        fun create(post: Post, vm: PostDetailsRxViewModel) = HomeFeedItem(
+        fun create(post: Post, vm: PostDetailsRxViewModel) = HomeFeedItem (
             post = post,
             onReply = {  },
             onRepost = { vm.repost(it) },
