@@ -54,7 +54,12 @@ class HomeFeedMvRxViewModel(
     }
 
     fun onResume() {
-        setState { copy(feed = postDataSource.cachedFeed()) }
+        setState {
+            copy(
+                feed = postDataSource.cachedFeed(),
+                isLoggedIn = userDataSource.isLoggedIn().value
+            )
+        }
     }
 
     fun fetchFeed() = withState { state ->
@@ -149,17 +154,14 @@ class HomeFeedMvRxViewModel(
             viewModelContext: ViewModelContext,
             state: HomeFeedState
         ): HomeFeedMvRxViewModel {
-
             val postDataSource: PostDataSource by viewModelContext.activity.inject()
-
             val userDataSource: UserDataSource by viewModelContext.activity.inject()
-
             return HomeFeedMvRxViewModel(state, postDataSource, userDataSource)
-
         }
 
         override fun initialState(viewModelContext: ViewModelContext): HomeFeedState? {
-            return HomeFeedState()
+            val userDataSource: UserDataSource by viewModelContext.activity.inject()
+            return HomeFeedState(isLoggedIn = userDataSource.isLoggedIn().value)
         }
     }
 
