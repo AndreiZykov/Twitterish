@@ -54,9 +54,6 @@ class PostRepository(private val userDataSource: UserDataSource, private val api
     override fun reply(postId: Long, body: String): Single<Post> {
         return api.reply(postId, PostBodyParams(body, userDataSource.userId()))
             .map { it.responseObject }
-            .doOnSuccess {
-                postById(postId)?.incrementReplyCountAndCopy()?.let { updateFeed(listOf(it)) }
-            }
     }
 
     override fun fetchReplies(postId: Long, page: Int): Observable<List<Post>> {

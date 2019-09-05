@@ -49,6 +49,7 @@ class PostDetailsRxViewModel(
                 .subscribeOn(io())
                 .observeOn(mainThread())
                 .execute {
+                    refreshMainPost()
                     val selectedPost = postDataSource.postById(selectedPostId)
                     val newPost = it.invoke()
                     val replies = newPost
@@ -83,7 +84,15 @@ class PostDetailsRxViewModel(
         withState { state ->
             if (state.selectedPostId != null) {
                 fetchReplies()
-                postDataSource.fetchPost(state.selectedPostId)
+                refreshMainPost()
+            }
+        }
+    }
+
+    private fun refreshMainPost() {
+        withState { state ->
+            state.selectedPostId?.let {
+                postDataSource.fetchPost(it)
                     .subscribeOn(io())
                     .observeOn(mainThread())
                     .execute {
@@ -99,6 +108,7 @@ class PostDetailsRxViewModel(
             copy(selectedPostId = postId, selectedPost = post, replyBody = "")
         }
         fetchReplies()
+        refreshMainPost()
     }
 
     fun repost(id: Long) {}
