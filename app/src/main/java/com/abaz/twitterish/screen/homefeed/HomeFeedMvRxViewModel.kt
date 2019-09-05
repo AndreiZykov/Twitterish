@@ -9,7 +9,6 @@ import com.airbnb.mvrx.*
 import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
 import io.reactivex.schedulers.Schedulers
 import org.koin.android.ext.android.inject
-import java.util.concurrent.TimeUnit
 
 /**
  * @author: Anthony Busto
@@ -55,15 +54,13 @@ class HomeFeedMvRxViewModel(
         postDataSource.feed(++page)
             .subscribeOn(Schedulers.io())
             .observeOn(mainThread())
-            .execute { copy(feedRequest = it, feed = feed + (it() ?: emptyList())) }
+            .execute { copy(feedRequest = it, feed = postDataSource.cachedFeed()) }
     }
 
     fun updateFeed() = withState { state ->
         if (state.feedRequest is Loading) return@withState
-        page = 1
-        postDataSource.feed(page)
-            .subscribeOn(Schedulers.io())
-            .execute { copy(feedRequest = it, feed = it() ?: feed) }
+        page = 0
+        fetchFeed()
     }
 
     // not supported yet :)
