@@ -37,9 +37,6 @@ sealed class PostExtrasIntent(open val postId: Long) {
     data class Dislike(override val postId: Long) : PostExtrasIntent(postId)
 }
 
-
-
-
 class HomeFeedItem(
     private val post: Post,
     private val onReply: (postId: Long) -> Unit,
